@@ -7,7 +7,7 @@ const componentFiles = utils
   .filter((item) => !['el-form', 'el-form-item', 'index'].includes(item))
 
 module.exports = {
-  title: 'Formily Vant',
+  title: 'LJ Portal Vant',
   dest: './doc-site',
   theme: '@vuepress-dumi/dumi',
   head: [
@@ -25,14 +25,6 @@ module.exports = {
       {
         text: '指南',
         link: '/guide/',
-      },
-      {
-        text: '主站',
-        link: 'https://v2.formilyjs.org',
-      },
-      {
-        text: 'GITHUB',
-        link: 'https://github.com/alibaba/formily',
       },
     ],
     sidebar: {
@@ -53,4 +45,22 @@ module.exports = {
       },
     ],
   ],
+  less: {
+    lessOptions: {
+      modifyVars: {},
+      javascriptEnabled: true,
+    },
+  },
+  configureWebpack: (config, isServer) => {
+    return {
+      resolve: {
+        alias: {
+          '@lj-portal/vant': path.resolve(
+            __dirname,
+            '../../packages/components/src'
+          ),
+        },
+      },
+    }
+  },
 }

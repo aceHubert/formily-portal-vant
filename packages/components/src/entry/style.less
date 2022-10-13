@@ -1,0 +1,32 @@
+@import '../__builtins__/styles/common.less';
+@import './item.less';
+
+@entry-prefix-cls: ~'@{lj-portal-prefix}-entry';
+
+.@{entry-prefix-cls}{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  
+    &--mulit-lines {
+      justify-content: flex-start;
+    }
+  
+    &__paged-item{
+      height: 200px;
+      width: 100%;
+    }
+
+    &__paged-dots{
+
+      &> li {
+        button{
+          background: @disabled-color !important;
+        }
+
+        &.slick-active button{
+          background: @var-primary !important;
+        }
+      }
+    }
+}

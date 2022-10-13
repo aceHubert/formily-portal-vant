@@ -8,7 +8,7 @@
     "module": "commonjs",
     "target": "es5",
     "paths": {
-      "@formily/*": ["./packages/*/src"]
+      "@lj-portal/*": ["./packages/*/src"]
     }
   },
   "exclude": ["./packages/*/esm", "./packages/*/lib"]

@@ -1,0 +1,19 @@
+@lj-portal-prefix: lj-portal-vant;
+@import 'vant/lib/style/var';
+@import './text-overflow.less';
+
+@theme-primary: #046bde;
+@theme-primary-light: lighten(desaturate(@theme-primary, 20%), 35%);
+@theme-primary-lighter: lighten(
+  @theme-primary,
+  96% - lightness(@theme-primary)
+);
+@theme-primary-dark: darken(desaturate(@theme-primary, 20%), 10%);
+@theme-primary-darker: darken(@theme-primary, lightness(@theme-primary) - 20%);
+
+// 变量主题色
+@primary-color: var(--theme-primary, @theme-primary);
+@primary-light-color: var(--theme-primary-light, @theme-primary-light);
+@primary-lighter-color: var(--theme-primary-lighter, @theme-primary-lighter);
+@primary-dark-color: var(--theme-primary-dark, @theme-primary-dark);
+@primary-darker-color: var(--theme-primary-darker, @theme-primary-darker);

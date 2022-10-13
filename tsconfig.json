@@ -16,7 +16,7 @@
     "downlevelIteration": true,
     "baseUrl": ".",
     "paths": {
-      "@formily/*": ["packages/*/src"]
+      "@lj-portal/*": ["packages/*/src"]
     }
   }
 }

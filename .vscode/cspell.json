@@ -20,8 +20,6 @@
     "alifd",
     "Mixins",
     "builtins",
-    "cascader",
-    "Cascader",
     "middlewares"
   ]
 }

@@ -11,6 +11,7 @@ lib/
 esm/
 temp_esm/
 dist/
+types/
 build/
 coverage/
 node_modules/
