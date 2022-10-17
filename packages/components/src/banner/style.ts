@@ -1,2 +1,3 @@
-import 'vant/lib/swipe/style/index.less';
+import 'vant/lib/swipe/index.less';
+
 import './style.less';

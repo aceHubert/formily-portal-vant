@@ -1,0 +1,49 @@
+@import '../__builtins__/styles/common.less';
+
+@page-item-prefix-cls: ~'@{lj-portal-prefix}-page-item';
+@page-item-title-underline-color: @border-color;
+@page-item-title-font-size: @font-size-lg;
+@page-item-title-line-height: 30px;
+
+.@{page-item-prefix-cls}{
+  width: 100%;
+  position: relative;
+
+  &__title{
+    display: flex;
+    justify-content: space-between;
+    vertical-align: middle;
+
+    &--underline{
+      border-bottom: 1px solid @page-item-title-underline-color;
+    }
+  }
+
+  &-title{  
+    &__text{
+      margin-bottom: 0;
+      padding: 0 10px;
+      font-size: @page-item-title-font-size;
+      line-height: @page-item-title-line-height;
+      font-weight: 700;
+      flex: 1 1 auto;
+      width: auto;
+      position: relative;
+      .textOverflow();
+
+      &::before{
+        content: '';
+        width: 5px;
+        background-color: @var-primary;
+        position: absolute;   
+        left: 0;
+        top: (@page-item-title-line-height - @page-item-title-font-size)/2;
+        bottom: (@page-item-title-line-height - @page-item-title-font-size)/2;
+      }
+    }
+  }
+
+  &__content{
+    position: relative;
+  }
+}
