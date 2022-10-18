@@ -1,12 +1,22 @@
 import kebabCase from 'lodash.kebabcase'
-import { defineComponent, provide } from 'vue-demi'
+import Color from 'color-js'
+import {
+  defineComponent,
+  getCurrentInstance,
+  provide,
+  computed,
+  watch,
+  onMounted,
+} from 'vue-demi'
 import { createForm } from '@formily/core'
 import { FormProvider, h, useForm } from '@formily/vue'
 import { stylePrefix } from '../__builtins__/configs'
 import { parseStyleUnit } from '../__builtins__/shared'
-import { useCssVars } from '../__builtins__/sfc-helper'
 import { PageConsumerProps } from './consumer-props'
 import { PageInjectKey } from './useApi'
+
+// Types
+import type { VNode } from 'vue'
 
 export interface PageProps {
   /**
@@ -35,20 +45,81 @@ export const Page = defineComponent<PageProps>({
     const prefixCls = `${stylePrefix}-page`
     const top = useForm()
 
-    useCssVars(() => {
-      return props.themeVars
-        ? Object.keys(props.themeVars || {}).reduce((prev, curr) => {
-            prev[`theme-${kebabCase(curr)}`] = props.themeVars[curr]
-            return prev
-          }, {})
+    const genColor = (color: string) => {
+      const hslColor = Color(color).toHSL() as any
+      const { saturation, lightness } = hslColor
+
+      const dark = hslColor
+        .setSaturation(saturation - 0.2)
+        .setLightness(lightness - 0.1)
+        .toString()
+      const darker = hslColor.setLightness(0.2).toString()
+      const light = hslColor
+        .setSaturation(saturation - 0.2)
+        .setLightness(lightness + 0.35)
+        .toString()
+      const lighter = hslColor.setLightness(0.96).toString()
+      const shadowColor = hslColor.setAlpha(0.3).toString()
+      return {
+        base: hslColor,
+        light,
+        lighter,
+        dark,
+        darker,
+      }
+    }
+
+    const themeVars = computed(() =>
+      props.themeVars
+        ? Object.keys(props.themeVars || PageConsumerProps.themeVars).reduce(
+            (prev, curr) => {
+              const colors = genColor(props.themeVars[curr])
+              prev[curr] = colors.base
+              prev[`${curr}Light`] = colors.light
+              prev[`${curr}Lighter`] = colors.lighter
+              prev[`${curr}Dark`] = colors.dark
+              prev[`${curr}Darker`] = colors.darker
+              return prev
+            },
+            {}
+          )
         : {}
-    })
+    )
 
     provide(PageInjectKey, {
       containerWidth: parseStyleUnit(
         props.containerWidth || PageConsumerProps.containerWidth
       ),
-      themeVars: props.themeVars,
+      themeVars: themeVars,
+    })
+
+    const setVarsOnVNode = (vnode: VNode, vars: Record<string, string>) => {
+      if (vnode?.elm) {
+        setVarsOnNode(vnode.elm, vars)
+      } else if (vnode?.isStatic) {
+        let { elm } = vnode
+        while (elm) {
+          setVarsOnNode(elm, vars)
+          elm = elm.nextSibling
+        }
+      }
+    }
+
+    const setVarsOnNode = (el: Node, vars: Record<string, string>) => {
+      if (el.nodeType === 1) {
+        const style = (el as HTMLElement).style
+        for (const key in vars) {
+          style.setProperty(`--theme-${kebabCase(key)}`, vars[key])
+        }
+      }
+    }
+
+    const instance = getCurrentInstance()
+    const setVars = () => setVarsOnVNode(instance.vnode, themeVars.value)
+    watch(themeVars, setVars)
+
+    onMounted(() => {
+      setVars()
     })
 
     return () => {
