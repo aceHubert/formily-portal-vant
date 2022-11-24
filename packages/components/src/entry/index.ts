@@ -1,127 +1,131 @@
-import { defineComponent, h, ref, watch } from 'vue-demi'
+import { defineComponent, h } from 'vue-demi'
+import { observer } from '@formily/reactive-vue'
+import { useField } from '@formily/vue'
 import { Swipe } from 'vant'
 import { stylePrefix } from '../__builtins__/configs'
-import { composeExport } from '../__builtins__/shared'
+import { composeExport, createDataResource } from '../__builtins__/shared'
+import { usePage } from '../page/useApi'
 import { EntryItem } from './item'
-
 // Types
 import type { VNode } from 'vue-demi'
-import type { RemoteDataSource } from '../__builtins__/shared'
+import type { Field } from '@formily/core'
+import type { ScopedDataSource, RemoteDataSource } from '../__builtins__/shared'
 import type { EntryItemProps, onClick } from './item'
-
-export interface RemoteEntryDataSource extends RemoteDataSource {}
 
 export interface EntryProps {
   /**
    * 数据源
-   * TODO: remote dataSource and dataMapper
    */
-  dataSource: EntryItemProps[] | RemoteEntryDataSource
+  dataSource:
+    | ScopedDataSource<EntryItemProps>
+    | RemoteDataSource<EntryItemProps>
   /**
-   * 显示的列数
+   * 显示的列数，默认：4
    */
   columns: number
   /**
-   * 显示的行数
+   * 显示的行数(当限制行数时横向滚动)
    */
   rows?: number
 }
 
-const EntryContainer = defineComponent<EntryProps>({
-  name: 'Entry',
-  inheritAttrs: false,
-  props: {
-    dataSource: { type: [Array, Object], required: true },
-    columns: { type: Number, default: 6 },
-    rows: Number,
-  },
-  setup(props, { attrs, emit }) {
-    const prefixCls = `${stylePrefix}-entry`
-    const itemsRef = ref<EntryItemProps[]>([])
+const EntryContainer = observer(
+  defineComponent<EntryProps>({
+    name: 'Entry',
+    inheritAttrs: false,
+    props: {
+      dataSource: [Array, Object],
+      columns: Number,
+      rows: Number,
+    },
+    setup(props, { attrs, emit }) {
+      const fieldRef = useField<Field>()
+      const { scopedDataRequest, dataRequest } = usePage()
+      const prefixCls = `${stylePrefix}-entry`
 
-    watch(
-      () => props.dataSource,
-      (value) => {
-        if (Array.isArray(value)) {
-          itemsRef.value = value
-        } else {
-          // TODO: request from remote
-        }
-      },
-      { immediate: true }
-    )
+      const datas = createDataResource(props.dataSource || [], {
+        scopedDataRequest,
+        dataRequest,
+      })
 
-    return () => {
-      const { rows, columns } = props
-      const items = itemsRef.value
+      datas.read()
 
-      const renderItems = (items: EntryItemProps[]): VNode => {
-        const cols = items.length < columns ? items.length : columns
-        const rows = items.length / cols + (items.length % cols === 0 ? 0 : 1)
+      return () => {
+        const { $result = [], $loading, $error } = datas
 
-        return h(
-          'div',
-          {
-            class: [prefixCls, { [`${prefixCls}--mulit-lines`]: rows > 1 }],
-          },
-          items.map((item) =>
-            h(EntryItem, {
-              style: {
-                flexBasis: `${100 / cols}%`,
-              },
-              props: {
-                icon: item.icon,
-                text: item.text,
-                linkUrl: item.linkUrl,
-                blank: item.blank,
-              },
-              on: {
-                click: () => {
-                  const plain = JSON.parse(JSON.stringify(item))
-                  ;(attrs.onItemClick as onClick)?.(plain)
-                  emit('itemClick', plain)
+        if ($loading) return null
+
+        if ($error)
+          return h('div', { class: `${prefixCls}__error` }, $error.message)
+
+        const { rows, columns = 4 } = props
+
+        const renderItems = (items: EntryItemProps[]): VNode => {
+          const cols = items.length < columns ? items.length : columns
+          const rows = items.length / cols + (items.length % cols === 0 ? 0 : 1)
+
+          return h(
+            'div',
+            {
+              class: [prefixCls, { [`${prefixCls}--mulit-lines`]: rows > 1 }],
+            },
+            items.map((item) =>
+              h(EntryItem, {
+                style: {
+                  flexBasis: `${100 / cols}%`,
                 },
-              },
-            })
-          )
-        )
-      }
-
-      const renderPagedItems = () => {
-        const length = rows! * columns
-        let index = 0
-        const itemVNodes: VNode[] = []
-        while (index < items.length - 1) {
-          const children = []
-          for (let i = index; i < index + length; i++) {
-            children.push(items[i])
-          }
-          itemVNodes.push(
-            h(
-              'div',
-              {
-                class: `${prefixCls}__paged-item`,
-              },
-              [renderItems(children.filter(Boolean))]
+                props: {
+                  icon: item.icon,
+                  text: item.text,
+                  linkUrl: item.linkUrl,
+                  blank: item.blank,
+                },
+                on: {
+                  click: () => {
+                    const plain = JSON.parse(JSON.stringify(item))
+                    ;(attrs.onItemClick as onClick)?.(plain)
+                    emit('itemClick', plain)
+                    fieldRef.value.setValue?.(plain)
+                  },
+                },
+              })
             )
           )
-          index += length
         }
 
-        return itemVNodes
-      }
+        const renderPagedItems = () => {
+          const length = rows! * columns
+          let index = 0
+          const itemVNodes: VNode[] = []
+          while (index < $result.length - 1) {
+            const children = []
+            for (let i = index; i < index + length; i++) {
+              children.push($result[i])
+            }
+            itemVNodes.push(
+              h(
+                'div',
+                {
+                  class: `${prefixCls}__paged-item`,
+                },
+                [renderItems(children.filter(Boolean))]
+              )
+            )
+            index += length
+          }
 
-      if (rows && rows * columns < items.length) {
-        return h(
-          Swipe,
-          [renderPagedItems()]
-        )
-      } else {
-        return renderItems(items)
+          return itemVNodes
+        }
+
+        if (rows && rows * columns < $result.length) {
+          return h(Swipe, [renderPagedItems()])
+        } else {
+          return renderItems($result)
+        }
       }
-    }
-  },
-})
+    },
+  })
+)
 
 export const Entry = composeExport(EntryContainer, {
   Item: EntryItem,

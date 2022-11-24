@@ -1,5 +1,7 @@
 export * from './unit'
 export * from './navigate'
 export * from './resolve-component'
+export * from './json-data-mapper'
+export * from './create-datasource'
 export * from './utils'
 export * from './types'

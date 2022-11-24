@@ -1,4 +1,5 @@
 import type { Component, VNode } from 'vue'
+import type { MapperSchema } from './json-data-mapper'
 
 export type SlotTypes =
   | Component
@@ -7,7 +8,9 @@ export type SlotTypes =
   | ((props: Record<string, any>) => VNode[] | VNode)
   | VNode
 
-export type RemoteDataSource = {
+export type ScopedDataSource<T> = Array<T & { dataScopeId?: number }>
+
+export type RemoteDataSource<T> = {
   url: string
-  mapper: Record<string, string>
+  schema: MapperSchema<T>
 }

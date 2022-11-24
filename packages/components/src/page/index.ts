@@ -32,6 +32,22 @@ export interface PageProps {
    * css vars
    */
   themeVars?: Record<string, string>
+  /**
+   * scopedDataResource mapper
+   * use dataRequest() if is string type
+   */
+  scopedDataRequest?:
+    | string
+    | ((ids: Array<string | number>) => Promise<Record<string, boolean>>)
+  /**
+   * remoteDataResource request function
+   */
+  dataRequest?: (config: {
+    url: string
+    params?: any
+    body?: any
+    [key: string]: any
+  }) => Promise<any>
 }
 
 export const Page = defineComponent<PageProps>({
@@ -40,6 +56,8 @@ export const Page = defineComponent<PageProps>({
     component: {},
     containerWidth: [String, Number],
     themeVars: Object,
+    scopedDataRequest: [String, Function],
+    dataRequest: Function,
   },
   setup(props, { slots }) {
     const prefixCls = `${stylePrefix}-page`
@@ -66,6 +84,7 @@ export const Page = defineComponent<PageProps>({
         lighter,
         dark,
         darker,
+        shadowColor,
       }
     }
 
@@ -86,11 +105,25 @@ export const Page = defineComponent<PageProps>({
         : {}
     )
 
+    const dataRequest = props.dataRequest ?? PageConsumerProps.dataRequest
+    const scopedDataRequest = props.scopedDataRequest
+      ? typeof props.scopedDataRequest === 'string'
+        ? (ids: Array<string | number>) =>
+            dataRequest({
+              url: `${props.scopedDataRequest}${
+                (props.scopedDataRequest as string).indexOf('?') < 0 ? '?' : '&'
+              }${ids.map((id) => `id[]=${id}`).join('&')}`,
+            })
+        : props.scopedDataRequest
+      : PageConsumerProps.scopedDataRequest
+
     provide(PageInjectKey, {
       containerWidth: parseStyleUnit(
         props.containerWidth || PageConsumerProps.containerWidth
       ),
       themeVars: themeVars,
+      dataRequest,
+      scopedDataRequest,
     })
 
     const setVarsOnVNode = (vnode: VNode, vars: Record<string, string>) => {

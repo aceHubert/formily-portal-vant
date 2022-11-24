@@ -1,6 +1,7 @@
 import './style'
 export * from './banner'
 export * from './entry'
+export * from './tabbar'
 export * from './html-content'
 export * from './page'
 export * from './page-container'

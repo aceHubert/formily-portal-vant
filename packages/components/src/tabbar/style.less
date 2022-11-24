@@ -1,0 +1,20 @@
+@import '../__builtins__/styles/common.less';
+
+@tabbar-prefix-cls: ~'@{lj-portal-prefix}-tabbar';
+
+.@{tabbar-prefix-cls}{
+  width: 100%;
+  position: relative;
+
+  &-item{
+    &__icon{
+      font-size: @tabbar-item-icon-size;
+    }
+  }
+
+  &__error{
+    color: red;
+    text-align: center;
+    line-height: 60px;
+  }
+}

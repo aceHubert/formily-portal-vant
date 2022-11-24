@@ -1158,6 +1158,15 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
+"@formily/core@2.2.12", "@formily/core@^2.2.2":
+  version "2.2.12"
+  resolved "https://registry.npmmirror.com/@formily/core/-/core-2.2.12.tgz#f1e158390820ae807a2d40a9db3cb33a59b0304f"
+  integrity sha512-79UjPFLm04zEvrrdIuQDdGG4g/Jdr78SKNfqGWDudHIgL+7pjcUn0usjspGiK2SP+f5ma/X7KMt2pktCQArHvw==
+  dependencies:
+    "@formily/reactive" "2.2.12"
+    "@formily/shared" "2.2.12"
+    "@formily/validator" "2.2.12"
+
 "@formily/core@2.2.5", "@formily/core@^2.0.0":
   version "2.2.5"
   resolved "https://registry.yarnpkg.com/@formily/core/-/core-2.2.5.tgz#5964a3f45e611154ec52fe1ed660e978f1096c16"
@@ -1166,6 +1175,23 @@
     "@formily/reactive" "2.2.5"
     "@formily/shared" "2.2.5"
     "@formily/validator" "2.2.5"
+
+"@formily/grid@^2.2.2":
+  version "2.2.12"
+  resolved "https://registry.npmmirror.com/@formily/grid/-/grid-2.2.12.tgz#f5d334d2a80f0ea3ad433f54417c5cbede07b4d2"
+  integrity sha512-sFbHiPz1y0ph/wDHMgfKhm1q0Dl+CaIM1pFiQ6CEquhfeNZ4ViCILEsnLfCTSP/0KwhcXH749BMu03Wz+mJ1bQ==
+  dependencies:
+    "@formily/reactive" "2.2.12"
+    "@juggle/resize-observer" "^3.3.1"
+
+"@formily/json-schema@2.2.12", "@formily/json-schema@^2.2.2":
+  version "2.2.12"
+  resolved "https://registry.npmmirror.com/@formily/json-schema/-/json-schema-2.2.12.tgz#17c1c91624e2093a1619246445da1ae9acd10021"
+  integrity sha512-t1rKA748PVLcPpemlyXNhtGlgDNCMVJeFnxKDjrjU0vAMF3bnncQuwGVQzESvSX0e44u1PSCEFCPk7vymFNl4A==
+  dependencies:
+    "@formily/core" "2.2.12"
+    "@formily/reactive" "2.2.12"
+    "@formily/shared" "2.2.12"
 
 "@formily/json-schema@2.2.5":
   version "2.2.5"
@@ -1176,10 +1202,23 @@
     "@formily/reactive" "2.2.5"
     "@formily/shared" "2.2.5"
 
+"@formily/path@2.2.12":
+  version "2.2.12"
+  resolved "https://registry.npmmirror.com/@formily/path/-/path-2.2.12.tgz#186c4d4d64e5c1c4edcbf8d2e3387eb855fff04c"
+  integrity sha512-UZ7vL2Lj2S99YPqopKL6z53ShdtzJUOP1OROXKXRI0DkoDnpLYl3wtgUVUC1PNlOqF25K9ljw86Q5fVJMno6mw==
+
 "@formily/path@2.2.5":
   version "2.2.5"
   resolved "https://registry.yarnpkg.com/@formily/path/-/path-2.2.5.tgz#bd617a03c3e45906f9a909db93522e6dfbb8c357"
   integrity sha512-9a5CEG81tW6vLuzPnDqxCmrCWqPP6LEKzrqWv6eeu3WNwZKhkGd0YX9vSLcnzVkojpt0NxSgxqvEDdN4vT3oxg==
+
+"@formily/reactive-vue@2.2.12", "@formily/reactive-vue@^2.2.2":
+  version "2.2.12"
+  resolved "https://registry.npmmirror.com/@formily/reactive-vue/-/reactive-vue-2.2.12.tgz#61fa30acd52d68da5540182a2777f054d20827c9"
+  integrity sha512-/9I+NdEAyMK9gXSoscc3dLulI8EpDSZEwEXcpwCxcVsGCW3yBhKCraBMMA9x0DsuFyPK6lvI63cb3xAnOWurHA==
+  dependencies:
+    "@formily/reactive" "2.2.12"
+    vue-demi "^0.13.6"
 
 "@formily/reactive-vue@2.2.5":
   version "2.2.5"
@@ -1189,10 +1228,28 @@
     "@formily/reactive" "2.2.5"
     vue-demi "^0.13.6"
 
+"@formily/reactive@2.2.12", "@formily/reactive@^2.2.2":
+  version "2.2.12"
+  resolved "https://registry.npmmirror.com/@formily/reactive/-/reactive-2.2.12.tgz#4e68edcf46910e3adb77cd6662c928bf89e29b3a"
+  integrity sha512-iW3p0ENVblDQeThFh8d1QRjPOTpaTf8+LcTAPuwa2Gq6VzGfz3xpPGybgbvgkdcxesWWQGDMBDYoFtrCoyrvMQ==
+
 "@formily/reactive@2.2.5":
   version "2.2.5"
   resolved "https://registry.yarnpkg.com/@formily/reactive/-/reactive-2.2.5.tgz#52af202bf6aaa9cab9b9fd309237fe5c5ff778d6"
   integrity sha512-mw7KgTAOqfHM1FJbPla0/LTLddX3K+CFHp6RpDuXC1lHmbt7f3wFmuVbCJQVKbslJEhQp740zrXk5SB0RGHwhw==
+
+"@formily/shared@2.2.12", "@formily/shared@^2.2.2":
+  version "2.2.12"
+  resolved "https://registry.npmmirror.com/@formily/shared/-/shared-2.2.12.tgz#0f44812bf95fa134baa2365d6ff6fad4f3e4434f"
+  integrity sha512-BhnG0aQ/4o2weDOig3IOm6A+8Pc3oQnjQky68FoK+NVoXQUkjTSdARYzMa7WzFK1uMzZWqeGvqx5FAs/HmlIgQ==
+  dependencies:
+    "@formily/path" "2.2.12"
+    camel-case "^4.1.1"
+    lower-case "^2.0.1"
+    no-case "^3.0.4"
+    param-case "^3.0.4"
+    pascal-case "^3.1.1"
+    upper-case "^2.0.1"
 
 "@formily/shared@2.2.5":
   version "2.2.5"
@@ -1238,6 +1295,13 @@
     ts-node "^9.1.1"
     typescript "^4.1.5"
 
+"@formily/validator@2.2.12":
+  version "2.2.12"
+  resolved "https://registry.npmmirror.com/@formily/validator/-/validator-2.2.12.tgz#a69736984cc89dd4805e912e3530b828bffcf789"
+  integrity sha512-CldnZFZgXO1Aw1rPBMuJ5UueCpD2GdTnui0fbSVXJcP7SI9SfDmKePl4mU0SQli38IJN6YDtao9Qnc52eSOXMQ==
+  dependencies:
+    "@formily/shared" "2.2.12"
+
 "@formily/validator@2.2.5":
   version "2.2.5"
   resolved "https://registry.yarnpkg.com/@formily/validator/-/validator-2.2.5.tgz#cbe62bad4e98c3ceb4dd9a88eff15d840a7a7e1e"
@@ -1256,6 +1320,21 @@
     "@formily/reactive-vue" "2.2.5"
     "@formily/shared" "2.2.5"
     "@formily/validator" "2.2.5"
+    fs-extra "^10.0.0"
+    vue-demi "^0.13.6"
+    vue-frag "^1.1.4"
+
+"@formily/vue@^2.2.2":
+  version "2.2.12"
+  resolved "https://registry.npmmirror.com/@formily/vue/-/vue-2.2.12.tgz#0f3e3d9bf01921d0b1e8cb97301207b20a63c2ae"
+  integrity sha512-bYTx49fjGbY+TgORg8eCde7tESj8XiFCjxoKYyAZLiL2PrFwdw76b4Grrj3rHSwFI/hwswzF+mTpvjJW+dSHzg==
+  dependencies:
+    "@formily/core" "2.2.12"
+    "@formily/json-schema" "2.2.12"
+    "@formily/reactive" "2.2.12"
+    "@formily/reactive-vue" "2.2.12"
+    "@formily/shared" "2.2.12"
+    "@formily/validator" "2.2.12"
     fs-extra "^10.0.0"
     vue-demi "^0.13.6"
     vue-frag "^1.1.4"
@@ -1377,6 +1456,11 @@
   dependencies:
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
+
+"@juggle/resize-observer@^3.3.1":
+  version "3.4.0"
+  resolved "https://registry.npmmirror.com/@juggle/resize-observer/-/resize-observer-3.4.0.tgz#08d6c5e20cf7e4cc02fd181c4b0c225cd31dbb60"
+  integrity sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==
 
 "@lerna/add@4.0.0":
   version "4.0.0"
@@ -2489,6 +2573,18 @@
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/@types/linkify-it/-/linkify-it-3.0.2.tgz#fd2cd2edbaa7eaac7e7f3c1748b52a19143846c9"
   integrity sha512-HZQYqbiFVWufzCwexrvh694SOim8z2d+xJl5UNamcvQFejLY/2YUtzXHYi3cHdI7PMlS8ejH2slRAOJQ32aNbA==
+
+"@types/lodash.kebabcase@^4.1.7":
+  version "4.1.7"
+  resolved "https://registry.npmmirror.com/@types/lodash.kebabcase/-/lodash.kebabcase-4.1.7.tgz#eb2d1162c669ecbc77f9912a31e952563848deff"
+  integrity sha512-qzrcpK5uiADZ9OyZaegalM0b9Y3WetoBQ04RAtP3xZFGC5ul1UxmbjZ3j6suCh0BDkvgQmoMh8t5e9cVrdJYMw==
+  dependencies:
+    "@types/lodash" "*"
+
+"@types/lodash@*":
+  version "4.14.189"
+  resolved "https://registry.npmmirror.com/@types/lodash/-/lodash-4.14.189.tgz#975ff8c38da5ae58b751127b19ad5e44b5b7f6d2"
+  integrity sha512-kb9/98N6X8gyME9Cf7YaqIMvYGnBSWqEci6tiettE6iJWH1XdJz/PO8LB0GtLCG7x8dU3KWhZT+lA1a35127tA==
 
 "@types/markdown-it@^10.0.0":
   version "10.0.3"
