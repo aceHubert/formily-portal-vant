@@ -99,7 +99,7 @@ export const Banner = observer(
                     height: parseStyleUnit(height),
                   },
                   domProps: {
-                    target: item.linkTarget || '_blank',
+                    target: item.linkTarget || '_self',
                     href: item.linkUrl || 'javascript:;',
                   },
                   on: {
@@ -119,7 +119,7 @@ export const Banner = observer(
                   {
                     class: [`${prefixCls}__item`, props.itemClassName],
                     domProps: {
-                      target: item.linkTarget || '_blank',
+                      target: item.linkTarget || '_self',
                       href: item.linkUrl || 'javascript:;',
                     },
                     on: {

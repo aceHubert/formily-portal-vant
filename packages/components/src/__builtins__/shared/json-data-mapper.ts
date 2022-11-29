@@ -13,7 +13,8 @@ export type MapperSchema<T extends Record<string, any>> = {
   isList?: boolean
   /**
    * data 对应的字段, 查看 lodash.get 使用方法
-   * @example 如从对象中取值 {
+   * @example 如从对象中取值
+   *  response {
    *    data: [{
    *      label: '',
    *      firstName: '',
@@ -21,8 +22,15 @@ export type MapperSchema<T extends Record<string, any>> = {
    *    }],
    *    success:
    * }
+   * set data as "data"
+   * @example 函数 (response)=>{ return response.data}
    */
   data?: string
+  /**
+   * data 类型
+   * @default FIELD
+   */
+  dataType?: Types
   /**
    * 数据映射关系
    * @example {
@@ -42,6 +50,8 @@ export type MapperSchema<T extends Record<string, any>> = {
       sourceField: string | string[]
       // sourceField 类型
       type?: Types
+      // 默认值
+      default?: any
     }
   >
 }
@@ -55,7 +65,12 @@ export class JsonMapper {
       return
     }
     if (schema.data) {
-      data = get(data, schema.data)
+      if (schema.dataType === Types.FUNCTION) {
+        const dataFn = new Function(`return ${schema.data}`)() as Function
+        data = this.transformFn(dataFn, [data])
+      } else {
+        data = get(data, schema.data)
+      }
       warn(!!data, 'JsonMapper -> data is undifined!')
     }
     if (this.checkIfSchemaIsList(schema)) {
@@ -111,6 +126,7 @@ export class JsonMapper {
     let obj = {}
     keys.forEach((key) => {
       const dataField = format[key].sourceField as string | string[]
+      const defaultValue = format[key].default
       if (
         format[key].type &&
         format[key].type.toUpperCase() === Types.FUNCTION
@@ -127,10 +143,13 @@ export class JsonMapper {
         if (Array.isArray(dataField)) {
           const item = JSON.stringify(dataField)
           const mapFields = JSON.parse(item.replace(regex, ''))
-          obj = { ...obj, [key]: this.mapMultipleFields(mapFields, data) }
+          obj = {
+            ...obj,
+            [key]: this.mapMultipleFields(mapFields, data, defaultValue),
+          }
         } else {
           const mapField = dataField.replace(regex, '')
-          obj = { ...obj, [key]: get(data, mapField) }
+          obj = { ...obj, [key]: get(data, mapField, defaultValue) }
         }
       }
     })
@@ -147,7 +166,8 @@ export class JsonMapper {
 
   private static mapMultipleFields<T>(
     fields: Array<string | Function>,
-    data: T
+    data: T,
+    defaultValue?: any
   ) {
     const dataset: any = []
     fields.forEach((field) => {
@@ -156,7 +176,7 @@ export class JsonMapper {
           this.transformFn(field, this.getParamsForTransformFn(field, data))
         )
       } else {
-        dataset.push(get(data, field))
+        dataset.push(get(data, field, defaultValue))
       }
     })
     return dataset

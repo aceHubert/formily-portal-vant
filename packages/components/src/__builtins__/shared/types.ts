@@ -13,4 +13,5 @@ export type ScopedDataSource<T> = Array<T & { dataScopeId?: number }>
 export type RemoteDataSource<T> = {
   url: string
   schema: MapperSchema<T>
+  [key: string]: any
 }

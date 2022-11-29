@@ -27,6 +27,10 @@ export interface EntryProps {
    * 显示的行数(当限制行数时横向滚动)
    */
   rows?: number
+  /**
+   * item props 默认值，item 里的设置优先
+   */
+  itemProps: Record<string, any>
 }
 
 const EntryContainer = observer(
@@ -37,6 +41,7 @@ const EntryContainer = observer(
       dataSource: [Array, Object],
       columns: Number,
       rows: Number,
+      itemProps: Object,
     },
     setup(props, { attrs, emit }) {
       const fieldRef = useField<Field>()
@@ -69,20 +74,15 @@ const EntryContainer = observer(
             {
               class: [prefixCls, { [`${prefixCls}--mulit-lines`]: rows > 1 }],
             },
-            items.map((item) =>
+            items.map((itemProps) =>
               h(EntryItem, {
                 style: {
                   flexBasis: `${100 / cols}%`,
                 },
-                props: {
-                  icon: item.icon,
-                  text: item.text,
-                  linkUrl: item.linkUrl,
-                  blank: item.blank,
-                },
+                props: Object.assign({}, props.itemProps, itemProps),
                 on: {
                   click: () => {
-                    const plain = JSON.parse(JSON.stringify(item))
+                    const plain = JSON.parse(JSON.stringify(itemProps))
                     ;(attrs.onItemClick as onClick)?.(plain)
                     emit('itemClick', plain)
                     fieldRef.value.setValue?.(plain)

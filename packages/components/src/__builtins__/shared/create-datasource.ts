@@ -33,8 +33,9 @@ export function createDataResource<Item, Params extends { [key: string]: any }>(
         return dataSource
       }
     } else {
-      const { url, schema } = dataSource
+      const { url, schema, ...rest } = dataSource
       const resp = await dataRequest({
+        ...rest,
         url:
           url +
           (Object.keys(params).length
