@@ -1,9 +1,13 @@
-import { defineComponent, h } from 'vue-demi'
+import { defineComponent, h, watch } from 'vue-demi'
 import { observer } from '@formily/reactive-vue'
 import { useField } from '@formily/vue'
 import { Swipe } from 'vant'
 import { stylePrefix } from '../__builtins__/configs'
-import { composeExport, createDataResource } from '../__builtins__/shared'
+import {
+  composeExport,
+  createDataResource,
+  equals,
+} from '../__builtins__/shared'
 import { usePage } from '../page/useApi'
 import { EntryItem } from './item'
 // Types
@@ -48,12 +52,21 @@ const EntryContainer = observer(
       const { scopedDataRequest, dataRequest } = usePage()
       const prefixCls = `${stylePrefix}-entry`
 
-      const datas = createDataResource(props.dataSource || [], {
+      const datas = createDataResource<EntryItemProps>({
         scopedDataRequest,
         dataRequest,
       })
 
-      datas.read()
+      watch(
+        () => props.dataSource,
+        (value, old) => {
+          !equals(value, old) &&
+            datas.read({
+              dataSource: value || [],
+            })
+        },
+        { immediate: true, deep: true }
+      )
 
       return () => {
         const { $result = [], $loading, $error } = datas
@@ -64,11 +77,9 @@ const EntryContainer = observer(
           return h('div', { class: `${prefixCls}__error` }, $error.message)
 
         const { rows, columns = 4 } = props
-
         const renderItems = (items: EntryItemProps[]): VNode => {
           const cols = items.length < columns ? items.length : columns
           const rows = items.length / cols + (items.length % cols === 0 ? 0 : 1)
-
           return h(
             'div',
             {

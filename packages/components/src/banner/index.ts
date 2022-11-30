@@ -1,9 +1,13 @@
-import { defineComponent, h } from 'vue-demi'
+import { defineComponent, h, watch } from 'vue-demi'
 import { useField } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { Swipe, SwipeItem } from 'vant'
 import { stylePrefix } from '../__builtins__/configs'
-import { parseStyleUnit, createDataResource } from '../__builtins__/shared'
+import {
+  parseStyleUnit,
+  createDataResource,
+  equals,
+} from '../__builtins__/shared'
 import { usePage } from '../page/useApi'
 
 // Types
@@ -61,12 +65,21 @@ export const Banner = observer(
       const { scopedDataRequest, dataRequest } = usePage()
       const prefixCls = `${stylePrefix}-banner`
 
-      const datas = createDataResource(props.dataSource || [], {
+      const datas = createDataResource<BannerItem>({
         scopedDataRequest,
         dataRequest,
       })
 
-      datas.read()
+      watch(
+        () => props.dataSource,
+        (value, old) => {
+          !equals(value, old) &&
+            datas.read({
+              dataSource: value || [],
+            })
+        },
+        { immediate: true, deep: true }
+      )
 
       return () => {
         const { $result = [], $loading, $error } = datas

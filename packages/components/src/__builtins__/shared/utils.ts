@@ -36,6 +36,30 @@ export function filterEmpty(children = []) {
 
 export const inBrowser = typeof window !== 'undefined'
 
+export function equals(x: any, y: any) {
+  const f1 = x instanceof Object
+  const f2 = y instanceof Object
+  if (!f1 || !f2) {
+    return x === y
+  }
+  if (Object.keys(x).length !== Object.keys(y).length) {
+    return false
+  }
+  const newX = Object.keys(x)
+  for (let p in newX) {
+    p = newX[p]
+    const a = x[p] instanceof Object
+    const b = y[p] instanceof Object
+    if (a && b) {
+      const result = equals(x[p], y[p])
+      if (!result) return false
+    } else if (x[p] !== y[p]) {
+      return false
+    }
+  }
+  return true
+}
+
 export function warn(condition: boolean, format: string, ...args: any[]) {
   if (format === undefined) {
     throw new Error(

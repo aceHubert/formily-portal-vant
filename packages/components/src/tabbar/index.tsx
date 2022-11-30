@@ -1,9 +1,13 @@
-import { defineComponent, getCurrentInstance, h } from 'vue-demi'
+import { defineComponent, getCurrentInstance, h, watch } from 'vue-demi'
 import { observer } from '@formily/reactive-vue'
 import { useField } from '@formily/vue'
 import { Tabbar as VTabbar, TabbarItem as VTabbarItem, Icon } from 'vant'
 import { stylePrefix } from '../__builtins__/configs'
-import { isAbsoluteUrl, createDataResource } from '../__builtins__/shared'
+import {
+  isAbsoluteUrl,
+  createDataResource,
+  equals,
+} from '../__builtins__/shared'
 import { usePage } from '../page/useApi'
 
 // Types
@@ -59,12 +63,21 @@ export const Tabbar = observer(
       const { scopedDataRequest, dataRequest } = usePage()
       const prefixCls = `${stylePrefix}-tabbar`
 
-      const datas = createDataResource(props.dataSource || [], {
+      const datas = createDataResource<TabbarItem>({
         scopedDataRequest,
         dataRequest,
       })
 
-      datas.read()
+      watch(
+        () => props.dataSource,
+        (value, old) => {
+          !equals(value, old) &&
+            datas.read({
+              dataSource: value || [],
+            })
+        },
+        { immediate: true, deep: true }
+      )
 
       const isUrlInCurrentRouterInstance = (url: string) => {
         if (!url || isAbsoluteUrl(url)) {
