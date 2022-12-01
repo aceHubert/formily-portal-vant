@@ -1,22 +1,23 @@
-import { defineComponent, h } from 'vue-demi';
-import { stylePrefix } from '../__builtins__/configs';
-import { resolveComponent } from '../__builtins__/shared';
+import { defineComponent, h } from 'vue-demi'
+import { useField } from '@formily/vue'
+import { stylePrefix } from '../__builtins__/configs'
+import { resolveComponent } from '../__builtins__/shared'
 
 export interface PageItemProps {
   /**
-   * 标题
+   * 标题, 默认值：field.title
    * @type any (string | slot | VNode)
    */
-  title?: any;
+  title?: any
   /**
    * 标题下划线样式
    */
-  titleUnderline?: boolean;
+  titleUnderline?: boolean
   /**
    * 标题右侧内容或组件
    * @type any (string | slot | VNode)
    */
-  titleRight?: any;
+  titleRight?: any
 }
 
 export const PageItem = defineComponent<PageItemProps>({
@@ -27,10 +28,11 @@ export const PageItem = defineComponent<PageItemProps>({
     titleUnderline: Boolean,
   },
   setup(props, { slots }) {
-    const prefixCls = `${stylePrefix}-page-item`;
+    const fieldRef = useField()
+    const prefixCls = `${stylePrefix}-page-item`
 
     const renderTitle = () => {
-      const { title, titleUnderline, titleRight } = props;
+      const { title = fieldRef.value.title, titleUnderline, titleRight } = props
       if (title) {
         return h(
           'div',
@@ -48,7 +50,7 @@ export const PageItem = defineComponent<PageItemProps>({
               {
                 class: `${prefixCls}-title__text`,
               },
-              resolveComponent(title),
+              resolveComponent(title)
             ),
             titleRight &&
               h(
@@ -56,13 +58,13 @@ export const PageItem = defineComponent<PageItemProps>({
                 {
                   class: `${prefixCls}-title__right`,
                 },
-                [resolveComponent(titleRight)],
+                [resolveComponent(titleRight)]
               ),
-          ],
-        );
+          ]
+        )
       }
-      return;
-    };
+      return
+    }
 
     const renderContent = () => {
       return h(
@@ -70,9 +72,9 @@ export const PageItem = defineComponent<PageItemProps>({
         {
           class: `${prefixCls}__content`,
         },
-        slots.default?.(),
-      );
-    };
+        slots.default?.()
+      )
+    }
 
     return () => {
       return h(
@@ -80,10 +82,10 @@ export const PageItem = defineComponent<PageItemProps>({
         {
           class: [prefixCls],
         },
-        [renderTitle(), renderContent()],
-      );
-    };
+        [renderTitle(), renderContent()]
+      )
+    }
   },
-});
+})
 
-export default PageItem;
+export default PageItem

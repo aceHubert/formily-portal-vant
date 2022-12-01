@@ -1,7 +1,6 @@
 import { defineComponent, h, watch } from 'vue-demi'
 import { observer } from '@formily/reactive-vue'
 import { useField } from '@formily/vue'
-import { Swipe } from 'vant'
 import { stylePrefix } from '../__builtins__/configs'
 import {
   composeExport,
@@ -10,8 +9,8 @@ import {
 } from '../__builtins__/shared'
 import { usePage } from '../page/useApi'
 import { EntryItem } from './item'
+
 // Types
-import type { VNode } from 'vue-demi'
 import type { Field } from '@formily/core'
 import type { ScopedDataSource, RemoteDataSource } from '../__builtins__/shared'
 import type { EntryItemProps, onClick } from './item'
@@ -32,9 +31,17 @@ export interface EntryProps {
    */
   rows?: number
   /**
+   * 当使用 rows 时 item 的自定义高度用于滑动隐藏滚动条，单位：rem
+   */
+  itemHeight?: number
+  /**
+   * 当使用 rows 时 item 的自定义宽度，单位：rem
+   */
+  itemWidth?: number
+  /**
    * item props 默认值，item 里的设置优先
    */
-  itemProps: Record<string, any>
+  itemProps?: Record<string, any>
 }
 
 const EntryContainer = observer(
@@ -45,6 +52,8 @@ const EntryContainer = observer(
       dataSource: [Array, Object],
       columns: Number,
       rows: Number,
+      itemHeight: Number,
+      itemWidth: Number,
       itemProps: Object,
     },
     setup(props, { attrs, emit }) {
@@ -76,16 +85,73 @@ const EntryContainer = observer(
         if ($error)
           return h('div', { class: `${prefixCls}__error` }, $error.message)
 
-        const { rows, columns = 4 } = props
-        const renderItems = (items: EntryItemProps[]): VNode => {
-          const cols = items.length < columns ? items.length : columns
-          const rows = items.length / cols + (items.length % cols === 0 ? 0 : 1)
+        if (props.rows && props.rows > 1) {
+          const { rows, itemHeight = 2.401, itemWidth = 2 } = props
+          const _cols =
+            $result.length / rows + ($result.length % rows === 0 ? 0 : 1)
           return h(
             'div',
             {
-              class: [prefixCls, { [`${prefixCls}--mulit-lines`]: rows > 1 }],
+              class: [prefixCls, `${prefixCls}--scrollable`],
+              style: { height: `${rows * itemHeight}rem` },
             },
-            items.map((itemProps) =>
+            [
+              h(
+                'div',
+                {
+                  class: `${prefixCls}__row-wrap`,
+                },
+                Array.from({ length: _cols }).map((_, index) =>
+                  h(
+                    'div',
+                    {
+                      class: [
+                        `${prefixCls}__cols`,
+                        `${prefixCls}__cols--${index}`,
+                      ],
+                    },
+                    $result
+                      .slice(index * rows, (index + 1) * rows)
+                      .map((itemProps) =>
+                        h(EntryItem, {
+                          style: {
+                            width: `${itemWidth}rem`,
+                            flexBasis: `${100 / rows}%`,
+                          },
+                          props: Object.assign({}, props.itemProps, itemProps),
+                          on: {
+                            click: () => {
+                              const plain = JSON.parse(
+                                JSON.stringify(itemProps)
+                              )
+                              ;(attrs.onItemClick as onClick)?.(plain)
+                              emit('itemClick', plain)
+                              fieldRef.value.setValue?.(plain)
+                            },
+                          },
+                        })
+                      )
+                  )
+                )
+              ),
+            ]
+          )
+        } else {
+          const { columns = 4 } = props
+          const cols = $result.length < columns ? $result.length : columns
+          const rows =
+            $result.length / cols + ($result.length % cols === 0 ? 0 : 1)
+          return h(
+            'div',
+            {
+              class: [
+                prefixCls,
+                {
+                  [`${prefixCls}--mulit-lines`]: rows > 1, // 大于1行时左对齐，否则平铺
+                },
+              ],
+            },
+            $result.map((itemProps) =>
               h(EntryItem, {
                 style: {
                   flexBasis: `${100 / cols}%`,
@@ -102,36 +168,6 @@ const EntryContainer = observer(
               })
             )
           )
-        }
-
-        const renderPagedItems = () => {
-          const length = rows! * columns
-          let index = 0
-          const itemVNodes: VNode[] = []
-          while (index < $result.length - 1) {
-            const children = []
-            for (let i = index; i < index + length; i++) {
-              children.push($result[i])
-            }
-            itemVNodes.push(
-              h(
-                'div',
-                {
-                  class: `${prefixCls}__paged-item`,
-                },
-                [renderItems(children.filter(Boolean))]
-              )
-            )
-            index += length
-          }
-
-          return itemVNodes
-        }
-
-        if (rows && rows * columns < $result.length) {
-          return h(Swipe, [renderPagedItems()])
-        } else {
-          return renderItems($result)
         }
       }
     },

@@ -1,6 +1,6 @@
 @import '../__builtins__/styles/common.less';
 
-@entry-item-prefix-cls: ~'@{lj-portal-prefix}-entry-item';
+@entry-item-prefix-cls: ~'@{entry-prefix-cls}-item';
 @entry-item-img-size: 46px;
 @entry-item-icon-font-size: 28px;
 
@@ -26,7 +26,6 @@
       width: @entry-item-img-size;
       height: @entry-item-img-size;
     }
-
     & > i {
       color: currentColor;
       font-size: @entry-item-icon-font-size;
@@ -35,7 +34,13 @@
 
   &__text {
     margin-bottom: 0;
+    padding: 0 5px;
+    width: 100%;
     font-size: @font-size-sm;
     line-height: 2;
+    text-align: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
   }
 }

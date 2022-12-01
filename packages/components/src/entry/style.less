@@ -8,12 +8,27 @@
     flex-wrap: wrap;
     justify-content: space-between;
   
+    // columns
     &--mulit-lines {
       justify-content: flex-start;
     }
-  
-    &__paged-item{
-      height: 200px;
-      width: 100%;
+
+    // rows
+    &--scrollable {
+      overflow: hidden;
+    }
+
+    &--scrollable &__row-wrap{
+      display: flex;
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      overflow-y: hidden;
+      overflow-x: auto;
+    }
+
+    &--scrollable &__cols{
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
     }
 }
