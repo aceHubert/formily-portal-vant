@@ -1,1 +1,1 @@
-export const stylePrefix = 'lj-portal-vant'
+export const stylePrefix = 'van-portal'

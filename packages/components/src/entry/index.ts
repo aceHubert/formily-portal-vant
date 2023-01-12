@@ -86,7 +86,7 @@ const EntryContainer = observer(
           return h('div', { class: `${prefixCls}__error` }, $error.message)
 
         if (props.rows && props.rows > 1) {
-          const { rows, itemHeight = 2.401, itemWidth = 2 } = props
+          const { rows, itemHeight = 2.351, itemWidth = 2 } = props
           const _cols =
             $result.length / rows + ($result.length % rows === 0 ? 0 : 1)
           return h(
