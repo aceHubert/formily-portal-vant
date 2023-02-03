@@ -1,5 +1,5 @@
-import { defineComponent, h, watch } from 'vue-demi'
-import { useField } from '@formily/vue'
+import { defineComponent, watch } from 'vue-demi'
+import { useField, h } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { Swipe, SwipeItem } from 'vant'
 import { stylePrefix } from '../__builtins__/configs'
@@ -8,7 +8,7 @@ import {
   createDataResource,
   equals,
 } from '../__builtins__/shared'
-import { usePage } from '../page/useApi'
+import { usePageLayout } from '../page-layout'
 
 // Types
 import type { VNode } from 'vue-demi'
@@ -57,25 +57,25 @@ export const Banner = observer(
       defaultKey: [String, Number],
       dataSource: [Array, Object],
       height: [String, Number],
-      autoplay: [String, Number],
+      autoplay: { type: [String, Number], default: 3000 },
       itemClassName: String,
     },
     setup(props, { attrs, emit }) {
       const fieldRef = useField<Field>()
-      const { scopedDataRequest, dataRequest } = usePage()
+      const pageLayoutRef = usePageLayout()
       const prefixCls = `${stylePrefix}-banner`
 
       const datas = createDataResource<BannerItem>({
-        scopedDataRequest,
-        dataRequest,
+        scopedDataRequest: pageLayoutRef.value.scopedDataRequest,
+        dataRequest: pageLayoutRef.value.dataRequest,
       })
 
       watch(
         () => props.dataSource,
         (value, old) => {
-          !equals(value, old) &&
+          ;(!datas.$loaded || !equals(value, old)) &&
             datas.read({
-              dataSource: value || [],
+              dataSource: value || (fieldRef.value.dataSource as any),
             })
         },
         { immediate: true, deep: true }
@@ -87,7 +87,11 @@ export const Banner = observer(
         if ($loading) return null
 
         if ($error)
-          return h('div', { class: `${prefixCls}__error` }, $error.message)
+          return h(
+            'div',
+            { class: `${prefixCls}__error` },
+            { default: () => [$error.message] }
+          )
 
         let initialSwipe = 0
         if (
@@ -99,72 +103,109 @@ export const Banner = observer(
           initialSwipe = 0
         }
 
-        const { autoplay = 3000, height } = props
+        const { autoplay, height } = props
 
         const renderItems = (): VNode[] => {
-          if (height) {
+          const _height = height === 'auto' ? undefined : height
+          if (_height) {
             return $result.map((item) =>
-              h(SwipeItem, [
-                h('a', {
-                  class: [`${prefixCls}__item`, props.itemClassName],
-                  style: {
-                    backgroundImage: `url(${item.imageUrl})`,
-                    height: parseStyleUnit(height),
-                  },
-                  domProps: {
-                    target: item.linkTarget || '_self',
-                    href: item.linkUrl || 'javascript:;',
-                  },
-                  on: {
-                    click: () => {
-                      ;(attrs.onItemClick as onItemClick)?.(item)
-                      emit('itemClick', item)
-                    },
-                  },
-                }),
-              ])
+              h(
+                SwipeItem,
+                {},
+                {
+                  default: () => [
+                    h(
+                      'a',
+                      {
+                        class: [
+                          `${prefixCls}__item`,
+                          `${prefixCls}__item--bg`,
+                          props.itemClassName,
+                        ],
+                        style: {
+                          backgroundImage: `url(${item.imageUrl})`,
+                          height: parseStyleUnit(_height),
+                        },
+                        domProps: {
+                          target: item.linkTarget || '_self',
+                          href: item.linkUrl || 'javascript:;',
+                        },
+                        on: {
+                          click: () => {
+                            ;(attrs.onItemClick as onItemClick)?.(item)
+                            emit('itemClick', item)
+                          },
+                        },
+                      },
+                      {}
+                    ),
+                  ],
+                }
+              )
             )
           } else {
             return $result.map((item) =>
-              h(SwipeItem, [
-                h(
-                  'a',
-                  {
-                    class: [`${prefixCls}__item`, props.itemClassName],
-                    domProps: {
-                      target: item.linkTarget || '_self',
-                      href: item.linkUrl || 'javascript:;',
-                    },
-                    on: {
-                      click: () => {
-                        ;(attrs.onItemClick as onItemClick)?.(item)
-                        emit('itemClick', item)
+              h(
+                SwipeItem,
+                {},
+                {
+                  default: () => [
+                    h(
+                      'a',
+                      {
+                        class: [`${prefixCls}__item`, props.itemClassName],
+                        domProps: {
+                          target: item.linkTarget || '_self',
+                          href: item.linkUrl || 'javascript:;',
+                        },
+                        on: {
+                          click: () => {
+                            ;(attrs.onItemClick as onItemClick)?.(item)
+                            emit('itemClick', item)
+                          },
+                        },
                       },
-                    },
-                  },
-                  [
-                    h('img', {
-                      domProps: {
-                        src: item.imageUrl,
-                        alt: item.imageUrl,
-                      },
-                    }),
-                  ]
-                ),
-              ])
+                      {
+                        default: () => [
+                          h(
+                            'img',
+                            {
+                              domProps: {
+                                src: item.imageUrl,
+                                alt: item.imageUrl,
+                              },
+                            },
+                            {}
+                          ),
+                        ],
+                      }
+                    ),
+                  ],
+                }
+              )
             )
           }
         }
+
+        // attrs 中非on开头的参数传给swipe props
+        const swipeProps = Object.keys(attrs).reduce(
+          (props, key) => {
+            if (!key.startsWith('on')) {
+              props[key] = attrs[key]
+            }
+            return props
+          },
+          {
+            initialSwipe,
+            autoplay,
+          }
+        )
 
         return h(
           Swipe,
           {
             class: prefixCls,
-            props: {
-              ...attrs,
-              initialSwipe,
-              autoplay,
-            },
+            props: swipeProps,
             on: {
               change: (index) => {
                 const value = $result[index].key
@@ -174,7 +215,7 @@ export const Banner = observer(
               },
             },
           },
-          renderItems()
+          { default: () => [renderItems()] }
         )
       }
     },

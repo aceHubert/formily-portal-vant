@@ -1,5 +1,5 @@
-import { defineComponent, h } from 'vue-demi'
-import { useField } from '@formily/vue'
+import { defineComponent } from 'vue-demi'
+import { useField, h } from '@formily/vue'
 import { stylePrefix } from '../__builtins__/configs'
 import { resolveComponent } from '../__builtins__/shared'
 
@@ -18,23 +18,35 @@ export interface PageItemProps {
    * @type any (string | slot | VNode)
    */
   titleRight?: any
+  /**
+   * 标题右侧内容以链接显示
+   */
+  titleRightLink?: string
+  /**
+   * 链接打开方式
+   */
+  titleRightLinkTarget?: '_blank' | '_self'
 }
 
 export const PageItem = defineComponent<PageItemProps>({
   name: 'PageItem',
   props: {
     title: {},
-    titleRight: {},
     titleUnderline: Boolean,
+    titleRight: {},
+    titleRightLink: String,
+    titleRightLinkTarget: String,
   },
   setup(props, { slots }) {
     const fieldRef = useField()
     const prefixCls = `${stylePrefix}-page-item`
 
-    const renderTitle = () => {
+    return () => {
       const { title = fieldRef.value.title, titleUnderline, titleRight } = props
-      if (title) {
-        return h(
+
+      const renderTitle =
+        (slots.title || title) &&
+        h(
           'div',
           {
             class: [
@@ -44,45 +56,62 @@ export const PageItem = defineComponent<PageItemProps>({
               },
             ],
           },
-          [
-            h(
-              'p',
-              {
-                class: `${prefixCls}-title__text`,
-              },
-              resolveComponent(title)
-            ),
-            titleRight &&
+          {
+            default: () => [
               h(
-                'div',
+                'p',
                 {
-                  class: `${prefixCls}-title__right`,
+                  class: `${prefixCls}-title__text`,
                 },
-                [resolveComponent(titleRight)]
+                {
+                  default: () => [slots.title?.() || resolveComponent(title)],
+                }
               ),
-          ]
+              (slots.titleRight || titleRight) &&
+                h(
+                  'div',
+                  {
+                    class: `${prefixCls}-title__right`,
+                  },
+                  {
+                    default: () => [
+                      props.titleRightLink
+                        ? h(
+                            'a',
+                            {
+                              domProps: {
+                                href: props.titleRightLink,
+                                target: props.titleRightLinkTarget,
+                              },
+                            },
+                            {
+                              default: () => [
+                                slots.titleRight?.() ||
+                                  resolveComponent(titleRight),
+                              ],
+                            }
+                          )
+                        : slots.titleRight?.() || resolveComponent(titleRight),
+                    ],
+                  }
+                ),
+            ],
+          }
         )
-      }
-      return
-    }
 
-    const renderContent = () => {
-      return h(
+      const renderContent = h(
         'div',
         {
           class: `${prefixCls}__content`,
         },
-        slots.default?.()
+        { default: () => [slots.default?.()] }
       )
-    }
-
-    return () => {
       return h(
         'div',
         {
           class: [prefixCls],
         },
-        [renderTitle(), renderContent()]
+        { default: () => [renderTitle, renderContent] }
       )
     }
   },

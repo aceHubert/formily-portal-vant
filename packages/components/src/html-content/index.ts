@@ -1,11 +1,12 @@
-import { defineComponent, h } from 'vue-demi';
-import { stylePrefix } from '../__builtins__/configs';
+import { defineComponent } from 'vue-demi'
+import { h } from '@formily/vue'
+import { stylePrefix } from '../__builtins__/configs'
 
 export interface HtmlProps {
   /**
    * innerHTML content
    */
-  content?: string;
+  content?: string
 }
 
 export const HtmlContent = defineComponent<HtmlProps>({
@@ -14,19 +15,19 @@ export const HtmlContent = defineComponent<HtmlProps>({
     content: String,
   },
   setup(props, { slots }) {
-    const prefixCls = `${stylePrefix}-html`;
+    const prefixCls = `${stylePrefix}-html`
 
     return () => {
       const content =
         props.content ||
         (() => {
           // child is a string
-          const def = slots.default?.();
+          const def = slots.default?.()
           if (typeof def === 'string') {
-            return def;
+            return def
           }
-          return '';
-        })();
+          return ''
+        })()
 
       return h(
         'div',
@@ -36,10 +37,10 @@ export const HtmlContent = defineComponent<HtmlProps>({
             innerHTML: content,
           },
         },
-        [],
-      );
-    };
+        {}
+      )
+    }
   },
-});
+})
 
-export default HtmlContent;
+export default HtmlContent

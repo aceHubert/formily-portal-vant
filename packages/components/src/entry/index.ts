@@ -1,13 +1,14 @@
-import { defineComponent, h, watch } from 'vue-demi'
+import { defineComponent, watch } from 'vue-demi'
 import { observer } from '@formily/reactive-vue'
-import { useField } from '@formily/vue'
+import { useField, h } from '@formily/vue'
 import { stylePrefix } from '../__builtins__/configs'
 import {
   composeExport,
   createDataResource,
+  parseStyleUnit,
   equals,
-} from '../__builtins__/shared'
-import { usePage } from '../page/useApi'
+} from '../__builtins__'
+import { usePageLayout } from '../page-layout'
 import { EntryItem } from './item'
 
 // Types
@@ -31,13 +32,13 @@ export interface EntryProps {
    */
   rows?: number
   /**
-   * 当使用 rows 时 item 的自定义高度用于滑动隐藏滚动条，单位：rem
+   * 当使用 rows 时 item 的自定义高度用于滑动隐藏滚动条
    */
-  itemHeight?: number
+  itemHeight?: string | number
   /**
    * 当使用 rows 时 item 的自定义宽度，单位：rem
    */
-  itemWidth?: number
+  itemWidth?: string | number
   /**
    * item props 默认值，item 里的设置优先
    */
@@ -52,26 +53,26 @@ const EntryContainer = observer(
       dataSource: [Array, Object],
       columns: Number,
       rows: Number,
-      itemHeight: Number,
-      itemWidth: Number,
+      itemHeight: [String, Number],
+      itemWidth: [String, Number],
       itemProps: Object,
     },
     setup(props, { attrs, emit }) {
       const fieldRef = useField<Field>()
-      const { scopedDataRequest, dataRequest } = usePage()
+      const pageLayoutRef = usePageLayout()
       const prefixCls = `${stylePrefix}-entry`
 
       const datas = createDataResource<EntryItemProps>({
-        scopedDataRequest,
-        dataRequest,
+        scopedDataRequest: pageLayoutRef.value.scopedDataRequest,
+        dataRequest: pageLayoutRef.value.dataRequest,
       })
 
       watch(
         () => props.dataSource,
         (value, old) => {
-          !equals(value, old) &&
+          ;(!datas.$loaded || !equals(value, old)) &&
             datas.read({
-              dataSource: value || [],
+              dataSource: value || (fieldRef.value.dataSource as any),
             })
         },
         { immediate: true, deep: true }
@@ -83,58 +84,94 @@ const EntryContainer = observer(
         if ($loading) return null
 
         if ($error)
-          return h('div', { class: `${prefixCls}__error` }, $error.message)
+          return h(
+            'div',
+            { class: `${prefixCls}__error` },
+            { default: () => [$error.message] }
+          )
 
-        if (props.rows && props.rows > 1) {
-          const { rows, itemHeight = 2.351, itemWidth = 2 } = props
+        if (props.rows && props.rows >= 1) {
+          const { rows, itemHeight, itemWidth } = props
           const _cols =
             $result.length / rows + ($result.length % rows === 0 ? 0 : 1)
+
+          const _itemHeight =
+            itemHeight && itemHeight !== 'inherit' ? itemHeight : 90
+          const _itemWidth =
+            itemWidth && itemWidth !== 'inherit' ? itemWidth : 90
+
           return h(
             'div',
             {
-              class: [prefixCls, `${prefixCls}--scrollable`],
-              style: { height: `${rows * itemHeight}rem` },
+              class: [`${prefixCls}-wrap`, `${prefixCls}-wrap--scrollable`],
+              style: {
+                height: parseStyleUnit(
+                  rows * parseFloat(String(_itemHeight)),
+                  typeof _itemHeight === 'string'
+                    ? _itemHeight.replace(/\d+/, '')
+                    : 'px'
+                ),
+              },
             },
-            [
-              h(
-                'div',
-                {
-                  class: `${prefixCls}__row-wrap`,
-                },
-                Array.from({ length: _cols }).map((_, index) =>
-                  h(
-                    'div',
-                    {
-                      class: [
-                        `${prefixCls}__cols`,
-                        `${prefixCls}__cols--${index}`,
-                      ],
-                    },
-                    $result
-                      .slice(index * rows, (index + 1) * rows)
-                      .map((itemProps) =>
-                        h(EntryItem, {
-                          style: {
-                            width: `${itemWidth}rem`,
-                            flexBasis: `${100 / rows}%`,
+            {
+              default: () => [
+                h(
+                  'div',
+                  {
+                    class: [prefixCls],
+                  },
+                  {
+                    default: () =>
+                      Array.from({ length: _cols }).map((_, index) =>
+                        h(
+                          'div',
+                          {
+                            class: [
+                              `${prefixCls}__item`,
+                              `${prefixCls}__item--${index}`,
+                            ],
                           },
-                          props: Object.assign({}, props.itemProps, itemProps),
-                          on: {
-                            click: () => {
-                              const plain = JSON.parse(
-                                JSON.stringify(itemProps)
-                              )
-                              ;(attrs.onItemClick as onClick)?.(plain)
-                              emit('itemClick', plain)
-                              fieldRef.value.setValue?.(plain)
-                            },
-                          },
-                        })
-                      )
-                  )
-                )
-              ),
-            ]
+                          {
+                            default: () =>
+                              $result
+                                .slice(index * rows, (index + 1) * rows)
+                                .map((itemProps) =>
+                                  h(
+                                    EntryItem,
+                                    {
+                                      style: {
+                                        // height: parseStyleUnit(_itemHeight),
+                                        width: parseStyleUnit(_itemWidth),
+                                        flexBasis: `${100 / rows}%`,
+                                      },
+                                      props: Object.assign(
+                                        {},
+                                        props.itemProps,
+                                        itemProps
+                                      ),
+                                      on: {
+                                        click: () => {
+                                          const plain = JSON.parse(
+                                            JSON.stringify(itemProps)
+                                          )
+                                          ;(attrs.onItemClick as onClick)?.(
+                                            plain
+                                          )
+                                          emit('itemClick', plain)
+                                          fieldRef.value.setValue?.(plain)
+                                        },
+                                      },
+                                    },
+                                    {}
+                                  )
+                                ),
+                          }
+                        )
+                      ),
+                  }
+                ),
+              ],
+            }
           )
         } else {
           const { columns = 4 } = props
@@ -144,29 +181,50 @@ const EntryContainer = observer(
           return h(
             'div',
             {
-              class: [
-                prefixCls,
-                {
-                  [`${prefixCls}--mulit-lines`]: rows > 1, // 大于1行时左对齐，否则平铺
-                },
-              ],
+              class: [`${prefixCls}-wrap`],
             },
-            $result.map((itemProps) =>
-              h(EntryItem, {
-                style: {
-                  flexBasis: `${100 / cols}%`,
-                },
-                props: Object.assign({}, props.itemProps, itemProps),
-                on: {
-                  click: () => {
-                    const plain = JSON.parse(JSON.stringify(itemProps))
-                    ;(attrs.onItemClick as onClick)?.(plain)
-                    emit('itemClick', plain)
-                    fieldRef.value.setValue?.(plain)
+            {
+              default: () => [
+                h(
+                  'div',
+                  {
+                    class: [
+                      prefixCls,
+                      `${prefixCls}--rows-${rows}`, // 大于1行时左对齐，否则平铺
+                    ],
                   },
-                },
-              })
-            )
+                  {
+                    default: () =>
+                      $result.map((itemProps) =>
+                        h(
+                          EntryItem,
+                          {
+                            style: {
+                              flexBasis: `${100 / cols}%`,
+                            },
+                            props: Object.assign(
+                              {},
+                              props.itemProps,
+                              itemProps
+                            ),
+                            on: {
+                              click: () => {
+                                const plain = JSON.parse(
+                                  JSON.stringify(itemProps)
+                                )
+                                ;(attrs.onItemClick as onClick)?.(plain)
+                                emit('itemClick', plain)
+                                fieldRef.value.setValue?.(plain)
+                              },
+                            },
+                          },
+                          {}
+                        )
+                      ),
+                  }
+                ),
+              ],
+            }
           )
         }
       }

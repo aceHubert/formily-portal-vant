@@ -1,5 +1,6 @@
-import { defineComponent, h } from 'vue-demi'
+import { defineComponent } from 'vue-demi'
 import { Icon } from 'vant'
+import { h } from '@formily/vue'
 import { stylePrefix } from '../__builtins__/configs'
 import { resolveComponent, parseStyleUnit } from '../__builtins__/shared'
 
@@ -17,6 +18,10 @@ export interface EntryItemProps {
    * icon font-size
    */
   iconFontSize: number | string
+  /**
+   * icon img height/width
+   */
+  iconImgSize: number | string
   /**
    * icon box element style
    */
@@ -50,7 +55,8 @@ export const EntryItem = defineComponent<EntryItemProps>({
     icon: {},
     iconPrefix: String,
     iconStyle: String,
-    iconFontSize: String,
+    iconFontSize: [String, Number],
+    iconImgSize: [String, Number],
     text: {},
     textStyle: String,
     linkUrl: String,
@@ -64,52 +70,68 @@ export const EntryItem = defineComponent<EntryItemProps>({
         icon,
         iconPrefix = 'icon',
         iconFontSize,
+        iconImgSize,
         iconStyle,
         text,
         textStyle,
         linkUrl,
         linkTarget,
       } = props
-      const renderIcon = () => {
-        return h(
-          'div',
-          {
-            class: `${prefixCls}__icon`,
-            style: iconStyle,
-          },
-          [
-            typeof icon === 'string'
-              ? /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|png)/g.test(icon)
-                ? h('img', {
-                    domProps: {
-                      src: icon,
-                      alt: typeof text === 'string' ? text : icon,
-                    },
-                  })
-                : h(Icon, {
-                    style: iconFontSize
-                      ? `font-size: ${parseStyleUnit(iconFontSize)}`
-                      : '',
-                    props: {
-                      name: icon,
-                      classPrefix: iconPrefix,
-                    },
-                  })
-              : resolveComponent(icon),
-          ]
-        )
-      }
 
-      const renderText = () => {
-        return h(
-          'p',
-          {
-            class: `${prefixCls}__text`,
-            style: textStyle,
-          },
-          [resolveComponent(text)]
-        )
-      }
+      const renderIcon = h(
+        'div',
+        {
+          class: `${prefixCls}__icon`,
+          style: iconStyle,
+        },
+        {
+          default: () => [
+            typeof icon === 'string'
+              ? /(http(s?):)?\/\/([/|.|?|=|\w|\s|-])*/gi.test(icon)
+                ? h(
+                    'img',
+                    {
+                      style:
+                        iconImgSize && iconImgSize !== 'inherit'
+                          ? {
+                              height: parseStyleUnit(iconImgSize),
+                              width: parseStyleUnit(iconImgSize),
+                            }
+                          : {},
+                      domProps: {
+                        src: icon,
+                        alt: typeof text === 'string' ? text : icon,
+                      },
+                    },
+                    {}
+                  )
+                : h(
+                    Icon,
+                    {
+                      style:
+                        iconFontSize && iconFontSize !== 'inherit'
+                          ? `font-size: ${parseStyleUnit(iconFontSize)}`
+                          : '',
+                      props: {
+                        name: icon,
+                        classPrefix: iconPrefix,
+                      },
+                    },
+                    {}
+                  )
+              : resolveComponent(icon),
+          ],
+        }
+      )
+
+      const renderText = h(
+        'p',
+        {
+          class: `${prefixCls}__text`,
+          style: textStyle,
+        },
+        { default: () => [resolveComponent(text)] }
+      )
 
       return h(
         'a',
@@ -126,7 +148,7 @@ export const EntryItem = defineComponent<EntryItemProps>({
             },
           },
         },
-        [renderIcon(), renderText()]
+        { default: () => [renderIcon, renderText] }
       )
     }
   },

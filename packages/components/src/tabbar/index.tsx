@@ -1,14 +1,10 @@
-import { defineComponent, getCurrentInstance, h, watch } from 'vue-demi'
+import { defineComponent, getCurrentInstance, watch } from 'vue-demi'
 import { observer } from '@formily/reactive-vue'
-import { useField } from '@formily/vue'
+import { useField, h } from '@formily/vue'
 import { Tabbar as VTabbar, TabbarItem as VTabbarItem, Icon } from 'vant'
 import { stylePrefix } from '../__builtins__/configs'
-import {
-  isAbsoluteUrl,
-  createDataResource,
-  equals,
-} from '../__builtins__/shared'
-import { usePage } from '../page/useApi'
+import { isAbsoluteUrl, createDataResource, equals } from '../__builtins__'
+import { usePageLayout } from '../page-layout'
 
 // Types
 import type { Field } from '@formily/core'
@@ -36,10 +32,6 @@ export interface TabbarProps {
    */
   dataSource: ScopedDataSource<TabbarItem> | RemoteDataSource<TabbarItem>
   /**
-   * item key or index
-   */
-  value: string | number
-  /**
    * icon class-prefix, TabbarItem 的定义优先, 默认: icon
    */
   iconClassPrefix?: string
@@ -54,26 +46,25 @@ export const Tabbar = observer(
     emits: ['change'],
     props: {
       dataSource: [Array, Object],
-      value: [String, Number],
       iconClassPrefix: String,
     },
     setup(props, { attrs, emit }) {
       const instance = getCurrentInstance()
       const fieldRef = useField<Field>()
-      const { scopedDataRequest, dataRequest } = usePage()
+      const pageLayoutRef = usePageLayout()
       const prefixCls = `${stylePrefix}-tabbar`
 
       const datas = createDataResource<TabbarItem>({
-        scopedDataRequest,
-        dataRequest,
+        scopedDataRequest: pageLayoutRef.value.scopedDataRequest,
+        dataRequest: pageLayoutRef.value.dataRequest,
       })
 
       watch(
         () => props.dataSource,
         (value, old) => {
-          !equals(value, old) &&
+          ;(!datas.$loaded || !equals(value, old)) &&
             datas.read({
-              dataSource: value || [],
+              dataSource: value || (fieldRef.value.dataSource as any),
             })
         },
         { immediate: true, deep: true }
@@ -90,53 +81,71 @@ export const Tabbar = observer(
         }
       }
 
-      const renderItems = (items: TabbarItem[] = []) => {
-        return items.map((item) => {
-          const icon =
-            typeof item.icon === 'string'
-              ? {
-                  active: item.icon,
-                  inactive: item.icon,
-                }
-              : item.icon
-          const urlInRouter = isUrlInCurrentRouterInstance(item.linkUrl)
-
-          return h(
-            VTabbarItem,
-            {
-              class: `${prefixCls}-item`,
-              props: {
-                name: item.key,
-                to: urlInRouter ? item.linkUrl : void 0,
-                url: urlInRouter ? void 0 : item.linkUrl,
-                replace: item.replace,
-                dot: item.dot,
-                badge: item.badge,
-              },
-              scopedSlots: {
-                icon: (active) =>
-                  h(Icon, {
-                    class: `${prefixCls}-item__icon`,
-                    props: {
-                      name: active ? icon.active : icon.inactive,
-                      classPrefix:
-                        props.iconClassPrefix ?? item.iconClassPrefix ?? 'icon',
-                    },
-                  }),
-              },
-            },
-            [h('span', { class: `${prefixCls}-item__text` }, item.text)]
-          )
-        })
-      }
-
       return () => {
         const { $result = [], $loading, $error } = datas
 
         if ($loading) return null
 
         if ($error)
-          return h('div', { class: `${prefixCls}__error` }, $error.message)
+          return h(
+            'div',
+            { class: `${prefixCls}__error` },
+            { default: () => [$error.message] }
+          )
+
+        const renderItems = (items: TabbarItem[] = []) => {
+          return items.map((item) => {
+            const icon =
+              typeof item.icon === 'string'
+                ? {
+                    active: item.icon,
+                    inactive: item.icon,
+                  }
+                : item.icon
+            const urlInRouter = isUrlInCurrentRouterInstance(item.linkUrl)
+
+            return h(
+              VTabbarItem,
+              {
+                class: `${prefixCls}-item`,
+                props: {
+                  name: item.key,
+                  to: urlInRouter ? item.linkUrl : void 0,
+                  url: urlInRouter ? void 0 : item.linkUrl,
+                  replace: item.replace,
+                  dot: item.dot,
+                  badge: item.badge,
+                },
+                scopedSlots: {
+                  icon: (active) =>
+                    h(
+                      Icon,
+                      {
+                        class: `${prefixCls}-item__icon`,
+                        props: {
+                          name: active ? icon.active : icon.inactive,
+                          classPrefix:
+                            props.iconClassPrefix ??
+                            item.iconClassPrefix ??
+                            'icon',
+                        },
+                      },
+                      {}
+                    ),
+                },
+              },
+              {
+                default: () => [
+                  h(
+                    'span',
+                    { class: `${prefixCls}-item__text` },
+                    { default: () => [item.text] }
+                  ),
+                ],
+              }
+            )
+          })
+        }
 
         // attrs 中非on开头的参数传给tabbar props
         const tabbarProps = Object.keys(attrs).reduce(
@@ -147,7 +156,7 @@ export const Tabbar = observer(
             return props
           },
           {
-            value: props.value,
+            value: fieldRef.value.value,
           }
         )
 
@@ -168,7 +177,7 @@ export const Tabbar = observer(
               },
             },
           },
-          renderItems($result)
+          { default: () => [renderItems($result)] }
         )
       }
     },

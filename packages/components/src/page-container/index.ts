@@ -1,40 +1,40 @@
-import { defineComponent, h } from 'vue-demi'
+import { defineComponent } from 'vue-demi'
+import { h } from '@formily/vue'
 import { stylePrefix } from '../__builtins__/configs'
 import { parseStyleUnit } from '../__builtins__/shared'
-import { usePage } from '../page/useApi'
 
 export interface PageContainerProps {
   /**
    * container with, default: page.containerWidth
    */
-  width?: 'fullwidth' | string | number
+  width?: 'inherit' | string | number
 }
 
 export const PageContainer = defineComponent<PageContainerProps>({
   name: 'PageContainer',
   props: {
-    width: { type: [String, Number] },
+    width: [String, Number],
   },
   setup(props, { slots }) {
     const prefixCls = `${stylePrefix}-page-container`
 
     return () => {
-      const { width } = props
+      const clasNames: Record<string, boolean> = {
+        [prefixCls]: true,
+      }
       const style: Record<string, any> = {}
-      if (width) {
-        width !== 'fullwidth' && (style.width = parseStyleUnit(width))
-      } else {
-        const { containerWidth } = usePage()
-        style.width = containerWidth
+      if (props.width && props.width !== 'inherit') {
+        style.width = parseStyleUnit(props.width)
+        style.maxWidth = '100%'
       }
 
       return h(
         'div',
         {
-          class: [prefixCls, width === 'fullwidth' && `${prefixCls}-fullwidth`],
+          class: clasNames,
           style,
         },
-        slots.default?.()
+        { default: () => [slots.default?.()] }
       )
     }
   },

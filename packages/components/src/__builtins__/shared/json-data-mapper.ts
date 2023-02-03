@@ -1,14 +1,9 @@
 import get from 'lodash.get'
 import { warn } from './utils'
 
-export enum Types {
-  FIELD = 'FIELD',
-  FUNCTION = 'FUNCTION',
-}
-
 export type MapperSchema<T extends Record<string, any>> = {
   /**
-   * 是否是数据
+   * 是否是List
    */
   isList?: boolean
   /**
@@ -23,14 +18,9 @@ export type MapperSchema<T extends Record<string, any>> = {
    *    success:
    * }
    * set data as "data"
-   * @example 函数 (response)=>{ return response.data}
+   * @example expression {{(response)=>{ return response.data}}}
    */
   data?: string
-  /**
-   * data 类型
-   * @default FIELD
-   */
-  dataType?: Types
   /**
    * 数据映射关系
    * @example {
@@ -38,8 +28,7 @@ export type MapperSchema<T extends Record<string, any>> = {
    *      sourceField : "label"
    *    },
    *    fullName:{
-   *      sourceField : "(firstName, lastName)=>{return firstName + ' ' + lastName}",
-   *      type: "FUNCTION"
+   *      sourceField : "{{(firstName, lastName)=>{return firstName + ' ' + lastName}}}",
    *    }
    * }
    */
@@ -47,11 +36,7 @@ export type MapperSchema<T extends Record<string, any>> = {
     keyof T,
     {
       // 对应到data中的字段名或函数
-      sourceField: string | string[]
-      // sourceField 类型
-      type?: Types
-      // 默认值
-      default?: any
+      sourceField: string
     }
   >
 }
@@ -59,17 +44,25 @@ export type MapperSchema<T extends Record<string, any>> = {
 export class JsonMapper {
   public static formatToSchema<T extends Record<string, any>>(
     schema: MapperSchema<T>,
-    data: T
+    data: T,
+    scope?: any
   ) {
+    if (scope === void 0) {
+      scope = {}
+    }
     if (this.invalidSchema(schema) || !data) {
       return
     }
     if (schema.data) {
-      if (schema.dataType === Types.FUNCTION) {
-        const dataFn = new Function(`return ${schema.data}`)() as Function
-        data = this.transformFn(dataFn, [data])
-      } else {
+      var matched = schema.data.match(this.ExpRE)
+      if (!matched) {
         data = get(data, schema.data)
+      } else {
+        const compile = new Function(
+          '$root',
+          `with($root){ return (${matched[1]}); }`
+        )(scope) as Function
+        data = this.exec(compile, [data])
       }
       warn(!!data, 'JsonMapper -> data is undifined!')
     }
@@ -83,19 +76,21 @@ export class JsonMapper {
   private static COMMENTS: any = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/gm
   private static DEFAULT_PARAMS: any = /=[^,]+/gm
   private static FAT_ARROWS: any = /=>.*$/gm
+  private static ExpRE = /^\s*\{\{([\s\S]*)\}\}\s*$/
 
   /*
    * Mapper to format Json to Object schema.
    */
   private static formatAsObj<T>(
     format: MapperSchema<T>['format'],
-    data: T | T[]
+    data: T | T[],
+    scope?: any
   ) {
     if (Array.isArray(data)) {
       data = data[0] // Taking 1st object in array if data passed is array and schema is not list.
     }
     const keys = Object.keys(format)
-    return this.formatter(keys, format, data)
+    return this.formatter(keys, format, data, scope)
   }
 
   /*
@@ -103,14 +98,15 @@ export class JsonMapper {
    */
   private static formatAsList<T>(
     format: MapperSchema<T>['format'],
-    data: T | T[]
+    data: T | T[],
+    scope?: any
   ) {
     if (!Array.isArray(data)) {
       data = [data]
     }
     const keys = Object.keys(format)
     return (!Array.isArray(data) ? [data] : data).map((item: any) => {
-      return this.formatter(keys, format, item)
+      return this.formatter(keys, format, item, scope)
     })
   }
 
@@ -120,38 +116,42 @@ export class JsonMapper {
   private static formatter<T>(
     keys: string[],
     format: MapperSchema<T>['format'],
-    data: T
+    data: T,
+    scope?: any
   ) {
     const regex = /\$/g
     let obj = {}
     keys.forEach((key) => {
-      const dataField = format[key].sourceField as string | string[]
-      const defaultValue = format[key].default
-      if (
-        format[key].type &&
-        format[key].type.toUpperCase() === Types.FUNCTION
-      ) {
-        const dataFieldFn = new Function(`return ${dataField}`)() as Function
+      const dataField = format[key].sourceField as string
+      var matched = dataField.match(this.ExpRE)
+      if (!matched) {
         obj = {
           ...obj,
-          [key]: this.transformFn(
-            dataFieldFn,
-            this.getParamsForTransformFn(dataFieldFn, data)
-          ),
+          [key]: get(data, dataField),
         }
       } else {
-        if (Array.isArray(dataField)) {
-          const item = JSON.stringify(dataField)
-          const mapFields = JSON.parse(item.replace(regex, ''))
-          obj = {
-            ...obj,
-            [key]: this.mapMultipleFields(mapFields, data, defaultValue),
-          }
-        } else {
-          const mapField = dataField.replace(regex, '')
-          obj = { ...obj, [key]: get(data, mapField, defaultValue) }
+        const compile = new Function(
+          '$root',
+          `with($root){ return (${matched[1]}) }`
+        )(scope) as Function
+        obj = {
+          ...obj,
+          [key]: this.exec(
+            compile,
+            this.getParamsForTransformFn(compile, data)
+          ),
         }
       }
+      // else {
+      //   if (Array.isArray(dataField)) {
+      //     const item = JSON.stringify(dataField)
+      //     const mapFields = JSON.parse(item.replace(regex, ''))
+      //     obj = { ...obj, [key]: this.mapMultipleFields(mapFields, data) }
+      //   } else {
+      //     const mapField = dataField.replace(regex, '')
+      //     obj = { ...obj, [key]: get(data, mapField) }
+      //   }
+      // }
     })
     return obj
   }
@@ -166,17 +166,16 @@ export class JsonMapper {
 
   private static mapMultipleFields<T>(
     fields: Array<string | Function>,
-    data: T,
-    defaultValue?: any
+    data: T
   ) {
     const dataset: any = []
     fields.forEach((field) => {
       if (field instanceof Function) {
         dataset.push(
-          this.transformFn(field, this.getParamsForTransformFn(field, data))
+          this.exec(field, this.getParamsForTransformFn(field, data))
         )
       } else {
-        dataset.push(get(data, field, defaultValue))
+        dataset.push(get(data, field))
       }
     })
     return dataset
@@ -188,7 +187,7 @@ export class JsonMapper {
     })
   }
 
-  private static transformFn(fn: Function, params: any[]) {
+  private static exec(fn: Function, params: any[]) {
     return fn.apply(fn, params)
   }
 
