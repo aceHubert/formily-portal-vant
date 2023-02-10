@@ -1,4 +1,4 @@
-import { defineComponent, unref } from 'vue-demi'
+import { defineComponent } from 'vue-demi'
 import { createBehavior, createResource } from '@designable/core'
 import { uid } from '@designable/shared'
 import {
@@ -7,7 +7,7 @@ import {
   DroppableWidget,
 } from '@formily/antdv-designable'
 import { PageItem as FormilyPageItem } from '@lj-portal/vant'
-import { composeExport } from '@formily/vant/esm/__builtins__'
+import { composeExport } from '@lj-portal/vant/esm/__builtins__'
 import { AllSchemas } from '../../schemas'
 import { AllLocales } from '../../locales'
 import { createVoidFieldSchema } from '../Field'
@@ -23,7 +23,7 @@ export const PageItem = composeExport(
       const nodeRef = useTreeNode()
 
       return () => {
-        const node = unref(nodeRef)
+        const node = nodeRef.value
 
         return (
           <FormilyPageItem

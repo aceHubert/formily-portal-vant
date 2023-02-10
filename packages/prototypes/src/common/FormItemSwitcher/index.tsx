@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue-demi'
-import { Switch } from '@formily/vant'
+import { Switch } from '@formily/antdv'
 
 export interface IFormItemSwitcherProps {
   value?: string

@@ -1,5 +1,5 @@
 import { Banner as FormilyBannner } from '@lj-portal/vant'
-import { composeExport } from '@formily/vant/esm/__builtins__'
+import { composeExport } from '@lj-portal/vant/esm/__builtins__'
 import { createBehavior, createResource } from '@designable/core'
 import { AllSchemas } from '../../schemas'
 import { AllLocales } from '../../locales'

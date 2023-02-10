@@ -7,7 +7,12 @@ export const Container = defineComponent({
   name: 'DnContainer',
   setup(props, { slots }) {
     return () => {
-      return <DroppableWidget key={uid()} scopedSlots={slots}></DroppableWidget>
+      return (
+        <DroppableWidget
+          // key={uid()}
+          scopedSlots={slots}
+        ></DroppableWidget>
+      )
     }
   },
 })

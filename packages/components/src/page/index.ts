@@ -17,7 +17,7 @@ export interface PageProps {
   previewTextPlaceholder: string | (() => VNode)
 }
 
-export const Page = defineComponent<PageProps>({
+export const Page = defineComponent({
   name: 'Page',
   props: ['form', 'component', 'previewTextPlaceholder'],
   setup(props, { attrs, slots, listeners }) {
