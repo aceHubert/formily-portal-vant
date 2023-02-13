@@ -63,9 +63,7 @@ export const Tabbar = observer(
         () => props.dataSource,
         (value, old) => {
           ;(!datas.$loaded || !equals(value, old)) &&
-            datas.read({
-              dataSource: value || (fieldRef.value.dataSource as any),
-            })
+            datas.read(value || (fieldRef.value.dataSource as any))
         },
         { immediate: true, deep: true }
       )
