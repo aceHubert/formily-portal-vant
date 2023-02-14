@@ -1,5 +1,5 @@
 import { computed } from 'vue-demi'
-import Color from 'color-js'
+import tinycolor from 'tinycolor2'
 import { warn } from '../__builtins__'
 
 import type { Ref } from 'vue-demi'
@@ -7,10 +7,6 @@ import type { Ref } from 'vue-demi'
 interface IProps {
   themeVars?: {
     primary?: string
-    primaryLighter?: string
-    primaryLight?: string
-    primaryDarker?: string
-    primaryDark?: string
     [key: string]: string
   }
   scopedDataRequest?:
@@ -28,30 +24,42 @@ interface IProps {
 export interface IUsePropsCalcPageLayout {
   (props: IProps): {
     props: Ref<
-      Omit<IProps, 'scopedDataRequest'> & {
+      IProps & {
+        themeVars: {
+          primary?: string
+          primaryLighter?: string
+          primaryLight?: string
+          primaryDarker?: string
+          primaryDark?: string
+          [key: string]: string
+        }
         scopedDataRequest: Extract<IProps['scopedDataRequest'], Function>
+        dataRequest: IProps['dataRequest']
       }
     >
   }
 }
 
-const genColor = (color: string) => {
-  const hslColor = Color(color).toHSL() as any
-  const { saturation, lightness } = hslColor
+const genColor = (colorInput: tinycolor.ColorInput) => {
+  const color = tinycolor(colorInput)
+  const { h, s, l } = color.toHsl()
 
-  const dark = hslColor
-    .setSaturation(saturation - 0.2)
-    .setLightness(lightness - 0.1)
-    .toString()
-  const darker = hslColor.setLightness(0.2).toString()
-  const light = hslColor
-    .setSaturation(saturation - 0.2)
-    .setLightness(lightness + 0.35)
-    .toString()
-  const lighter = hslColor.setLightness(0.96).toString()
-  const shadowColor = hslColor.setAlpha(0.3).toString()
+  const base = color.toHexString()
+  const dark = tinycolor({
+    h,
+    s: (s - 0.2) * 100,
+    l: (l - 0.1) * 100,
+  }).toHexString()
+  const darker = tinycolor({ h, s, l: 20 }).toHexString()
+  const light = tinycolor({
+    h,
+    s: (s - 0.2) * 100,
+    l: (l + 0.35) * 100,
+  }).toHexString()
+  const lighter = tinycolor({ h, s, l: 96 }).toHexString()
+  const shadowColor = color.clone().setAlpha(0.3).toString()
   return {
-    base: hslColor,
+    base,
     light,
     lighter,
     dark,
@@ -62,19 +70,22 @@ const genColor = (color: string) => {
 
 export const usePropsCalcPageLayout: IUsePropsCalcPageLayout = (props) => {
   const layoutProps = computed(() => {
+    const { primary, ...restVars } = props.themeVars || {}
+    const primaryVars = {}
+    if (primary) {
+      const colors = genColor(primary)
+      primaryVars['primary'] = colors.base
+      primaryVars['primaryLight'] = colors.light
+      primaryVars['primaryLighter'] = colors.lighter
+      primaryVars['primaryDark'] = colors.dark
+      primaryVars['primaryDarker'] = colors.darker
+    }
     return {
       ...props,
-      themeVars: props.themeVars
-        ? Object.keys(props.themeVars).reduce((prev, curr) => {
-            const colors = genColor(props.themeVars[curr])
-            prev[curr] = colors.base
-            prev[`${curr}Light`] = colors.light
-            prev[`${curr}Lighter`] = colors.lighter
-            prev[`${curr}Dark`] = colors.dark
-            prev[`${curr}Darker`] = colors.darker
-            return prev
-          }, {})
-        : {},
+      themeVars: {
+        ...primaryVars,
+        ...restVars,
+      },
       dataRequest:
         props.dataRequest ??
         (() => {

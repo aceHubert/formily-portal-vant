@@ -35,10 +35,7 @@ export interface PageLayoutProps {
   shallow?: boolean
 }
 
-type ProvidePageLayoutProps = Omit<
-  PageLayoutProps,
-  'themeVars' | 'containerWidth' | 'scopedDataRequest' | 'dataRequest'
-> & {
+type ProvidePageLayoutProps = PageLayoutProps & {
   themeVars?: {
     primary?: string
     primaryLighter?: string
@@ -47,7 +44,6 @@ type ProvidePageLayoutProps = Omit<
     primaryDark?: string
     [key: string]: string
   }
-  containerWidth?: string
   scopedDataRequest?: Extract<PageLayoutProps['scopedDataRequest'], Function>
   dataRequest?: PageLayoutProps['dataRequest']
 }
