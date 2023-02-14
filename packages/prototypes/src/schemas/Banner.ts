@@ -20,10 +20,18 @@ export const Banner: ISchema = {
       },
     },
     autoplay: {
-      type: 'boolean',
+      type: 'number',
       'x-decorator': 'FormItem',
       'x-component': 'InputNumber',
       'x-component-props': {},
+    },
+    'show-indicators': {
+      type: 'booelan',
+      'x-decorator': 'FormItem',
+      'x-component': 'Switch',
+      'x-component-props': {
+        defaultChecked: true,
+      },
     },
     height: {
       type: 'string | number',
