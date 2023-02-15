@@ -4,7 +4,7 @@ import { composeExport } from '@formily/vant/esm/__builtins__'
 import { AllSchemas } from '../../schemas'
 import { AllLocales } from '../../locales'
 import { createFieldSchema } from '../Field'
-import './style.less'
+import './styles.less'
 
 export const Tabbar = composeExport(FormilyTabbar, {
   Behavior: createBehavior({
@@ -44,13 +44,13 @@ export const Tabbar = composeExport(FormilyTabbar, {
           enum: [
             {
               key: 1,
-              icon: '//via.placeholder.com/100x100?text=1',
+              icon: '//via.placeholder.com/100x100?text=H',
               text: 'Home',
               linkUrl: 'javascript:;',
             },
             {
               key: 2,
-              icon: '//via.placeholder.com/100x100?text=2',
+              icon: '//via.placeholder.com/100x100?text=M',
               text: 'Me',
               linkUrl: 'javascript:;',
               replace: true,

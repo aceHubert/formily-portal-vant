@@ -1,7 +1,11 @@
 @import (reference) '../../styles.less';
 
 .dn-designable-page {
-  position: static;
+  min-width: inherit !important;
+
+  .@{van-prefix}-tabbar-item{ 
+      pointer-events: none;
+  }
 
   a {
     pointer-events: none;

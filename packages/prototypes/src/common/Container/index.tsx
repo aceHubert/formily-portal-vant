@@ -9,7 +9,7 @@ export const Container = defineComponent({
     return () => {
       return (
         <DroppableWidget
-          // key={uid()}
+          key={uid()}
           scopedSlots={slots}
         ></DroppableWidget>
       )
