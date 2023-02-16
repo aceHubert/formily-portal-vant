@@ -13,7 +13,7 @@ export function absoluteGo(url: string, replace = false) {
 
 // 判断是否是绝对路径
 export function isAbsoluteUrl(url: string) {
-  return /^(https?:\/\/|\/\/)[\w.]+\/?/gi.test(url)
+  return /^((https?:)?\/\/|\/\/)[\w.]+\/?/gi.test(url)
 }
 
 /**

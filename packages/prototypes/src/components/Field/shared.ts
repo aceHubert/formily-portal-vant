@@ -125,10 +125,10 @@ export const createFieldSchema = (
             'x-component': 'Select',
             'x-component-props': {},
           },
-          // default: {
-          //   'x-decorator': 'FormItem',
-          //   'x-component': 'ValueInput',
-          // },
+          default: {
+            'x-decorator': 'FormItem',
+            'x-component': 'ValueInput',
+          },
           // enum: {
           //   'x-decorator': 'FormItem',
           //   'x-component': DataSourceSetter,

@@ -69,7 +69,7 @@ export const Tabbar = observer(
       )
 
       const isUrlInCurrentRouterInstance = (url: string) => {
-        if (!url || isAbsoluteUrl(url)) {
+        if (!url || isAbsoluteUrl(url) || /^javas/.test(url)) {
           return false
         } else if ((instance.proxy as any).$router) {
           const { resolved } = (instance.proxy as any).$router.resolve(url)
@@ -92,7 +92,7 @@ export const Tabbar = observer(
           )
 
         const renderItems = (items: TabbarItem[] = []) => {
-          return items.map((item) => {
+          return items.map((item, index) => {
             const icon =
               typeof item.icon === 'string'
                 ? {
@@ -105,6 +105,7 @@ export const Tabbar = observer(
             return h(
               VTabbarItem,
               {
+                key: item.key || index,
                 class: `${prefixCls}-item`,
                 props: {
                   name: item.key,
@@ -115,7 +116,7 @@ export const Tabbar = observer(
                   badge: item.badge,
                 },
                 scopedSlots: {
-                  icon: (active) =>
+                  icon: ({ active }) =>
                     h(
                       Icon,
                       {

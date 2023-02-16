@@ -27,24 +27,14 @@ export const Entry: ISchema = {
         min: 0,
       },
     },
-    itemHeight: {
+    gutter: {
       type: 'string | number',
       'x-decorator': 'FormItem',
       'x-component': 'SizeInput',
       'x-component-props': {
-        include: ['inherit', 'px', 'rem'],
-      },
-      'x-reactions': (field) => {
-        const rows = field.form?.values?.['x-component-props']?.rows
-        field.visible = rows && rows > 0
-      },
-    },
-    itemWidth: {
-      type: 'string | number',
-      'x-decorator': 'FormItem',
-      'x-component': 'SizeInput',
-      'x-component-props': {
-        include: ['inherit', 'px', 'rem'],
+        include: ['inherit', 'px', 'em', 'rem'],
+        min: 0,
+        step: 0.1,
       },
       'x-reactions': (field) => {
         const rows = field.form?.values?.['x-component-props']?.rows

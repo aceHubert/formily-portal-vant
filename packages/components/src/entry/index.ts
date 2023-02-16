@@ -32,13 +32,9 @@ export interface EntryProps {
    */
   rows?: number
   /**
-   * 当使用 rows 时 item 的自定义高度用于滑动隐藏滚动条
+   * 当使用 rows 时 columns 之间间隔
    */
-  itemHeight?: string | number
-  /**
-   * 当使用 rows 时 item 的自定义宽度，单位：rem
-   */
-  itemWidth?: string | number
+  gutter?: string | number
   /**
    * item props 默认值，item 里的设置优先
    */
@@ -53,8 +49,7 @@ const EntryContainer = observer(
       dataSource: [Array, Object],
       columns: Number,
       rows: Number,
-      itemHeight: [String, Number],
-      itemWidth: [String, Number],
+      gutter: [String, Number],
       itemProps: Object,
     },
     setup(props, { attrs, emit }) {
@@ -89,27 +84,19 @@ const EntryContainer = observer(
           )
 
         if (props.rows && props.rows >= 1) {
-          const { rows, itemHeight, itemWidth } = props
+          const { rows, gutter } = props
           const _cols =
             $result.length / rows + ($result.length % rows === 0 ? 0 : 1)
-
-          const _itemHeight =
-            itemHeight && itemHeight !== 'inherit' ? itemHeight : 90
-          const _itemWidth =
-            itemWidth && itemWidth !== 'inherit' ? itemWidth : 90
+          const _gutter = gutter && gutter !== 'inherit' ? gutter : 0.834
+          const _gutterWidth = parseStyleUnit(
+            parseFloat(String(_gutter)) / 2,
+            typeof _gutter === 'string' ? _gutter.replace(/\d+/, '') : 'rem'
+          )
 
           return h(
             'div',
             {
               class: [`${prefixCls}-wrap`, `${prefixCls}-wrap--scrollable`],
-              style: {
-                height: parseStyleUnit(
-                  rows * parseFloat(String(_itemHeight)),
-                  typeof _itemHeight === 'string'
-                    ? _itemHeight.replace(/\d+/, '')
-                    : 'px'
-                ),
-              },
             },
             {
               default: () => [
@@ -128,6 +115,10 @@ const EntryContainer = observer(
                               `${prefixCls}__item`,
                               `${prefixCls}__item--${index}`,
                             ],
+                            style: {
+                              paddingLeft: _gutterWidth,
+                              paddingRight: _gutterWidth,
+                            },
                           },
                           {
                             default: () =>
@@ -138,8 +129,6 @@ const EntryContainer = observer(
                                     EntryItem,
                                     {
                                       style: {
-                                        // height: parseStyleUnit(_itemHeight),
-                                        width: parseStyleUnit(_itemWidth),
                                         flexBasis: `${100 / rows}%`,
                                       },
                                       props: Object.assign(

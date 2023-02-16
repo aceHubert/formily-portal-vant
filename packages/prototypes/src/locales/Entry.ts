@@ -12,7 +12,7 @@ export const Entry = {
           title: '显示行数',
           tooltip: '固定显示行数，超出横向滚动',
         },
-        itemHeight: '子项高度',
+        gutter: '列间距',
         itemWidth: '子项宽度',
         itemProps: {
           iconImgSize: {
@@ -40,8 +40,7 @@ export const Entry = {
           title: 'Rows',
           tooltip: 'Fixed rows and show horizontal scroll bar',
         },
-        itemHeight: 'Item height',
-        itemWidth: 'Item width',
+        gutter: 'Gutter',
         itemProps: {
           iconImgSize: {
             title: 'Width/Height',
