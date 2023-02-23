@@ -10,5 +10,6 @@ export const BuilderConfig: IBuilderConfig = {
     '@formily/antdv-designable': 'Formily.AntdvDesignable',
     '@formily/antdv-setters': 'Formily.AntdvSetters',
     '@formily/antdv-settings-form': 'Formily.AntdvSettingsForm',
+    '@ckeditor/ckeditor5-build-balloon': 'BalloonEditor',
   },
 }

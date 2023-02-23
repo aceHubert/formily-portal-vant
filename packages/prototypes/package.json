@@ -38,14 +38,7 @@
     }
   },
   "dependencies": {
-    "@ckeditor/ckeditor5-editor-balloon": "^35.4.0",
-    "@ckeditor/ckeditor5-essentials": "^35.4.0",
-    "@ckeditor/ckeditor5-autoformat": "^35.4.0",
-    "@ckeditor/ckeditor5-basic-styles": "^35.4.0",
-    "@ckeditor/ckeditor5-font": "^35.4.0",
-    "@ckeditor/ckeditor5-indent": "^35.4.0",
-    "@ckeditor/ckeditor5-paragraph": "^35.4.0",
-    "@ckeditor/ckeditor5-paste-from-office": "^35.4.0",
+    "@ckeditor/ckeditor5-build-balloon": "^35.4.0",
     "@ckeditor/ckeditor5-vue2": "^3.0.1"    
   },
   "devDependencies": {
