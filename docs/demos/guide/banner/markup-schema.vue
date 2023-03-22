@@ -15,12 +15,12 @@ export default {
           key: 1,
           linkUrl: 'https://www.baidu.com',
           imageUrl:
-            '//res.ihealthinkcare.com/image/cp-banners-74d712532b56266787e6a9e74eb56d94.jpg',
+            '//via.placeholder.com/1920x300/FF0000/FFFFFF?text=Image1',
         },
         {
           key: 2,
           imageUrl:
-            '//res.ihealthinkcare.com/image/cp-banners-8db6d16fb5ee8ce3bc74a69421a88423.jpg',
+            '//via.placeholder.com/1920x300/008000/FFFFFF?text=Image2',
         },
       ],
     }
