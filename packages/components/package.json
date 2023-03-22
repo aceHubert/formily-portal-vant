@@ -1,13 +1,13 @@
 {
-  "name": "@lj-portal/vant",
+  "name": "@formily-portal/vant",
   "version": "1.0.0-alpha.0",
   "license": "MIT",
   "main": "lib",
   "module": "esm",
   "types": "esm/index.d.ts",
-  "umd:main": "dist/lj-portal.vant.umd.production.js",
-  "unpkg": "dist/lj-portal.vant.umd.production.js",
-  "jsdelivr": "dist/lj-portal.vant.umd.production.js",
+  "umd:main": "dist/formily-portal.vant.umd.production.js",
+  "unpkg": "dist/formily-portal.vant.umd.production.js",
+  "jsdelivr": "dist/formily-portal.vant.umd.production.js",
   "jsnext:main": "esm",
   "sideEffects": [
     "dist/*",

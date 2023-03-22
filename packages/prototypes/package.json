@@ -1,5 +1,5 @@
 {
-  "name": "@lj-portal/vant-prototypes",
+  "name": "@formily-portal/vant-prototypes",
   "version": "1.0.0-alpha.0",
   "private": true,
   "license": "MIT",
@@ -9,9 +9,9 @@
     "npm": ">=3.0.0"
   },
   "module": "esm",
-  "umd:main": "dist/lj-portal.vant-prototypes.umd.production.js",
-  "unpkg": "dist/lj-portal.vant-prototypes.umd.production.js",
-  "jsdelivr": "dist/lj-portal.vant-prototypes.umd.production.js",
+  "umd:main": "dist/formily-portal.vant-prototypes.umd.production.js",
+  "unpkg": "dist/formily-portal.vant-prototypes.umd.production.js",
+  "jsdelivr": "dist/formily-portal.vant-prototypes.umd.production.js",
   "jsnext:main": "esm",
   "sideEffects": [
     "dist/*",
@@ -50,6 +50,6 @@
     "@formily/reactive-vue": "^2.0.0",
     "@formily/shared": "^2.0.0",
     "@formily/vue": "^2.0.0",
-    "@lj-portal/vant": "^1.0.0-alpha.0"
+    "@formily-portal/vant": "^1.0.0-alpha.0"
   }
 }

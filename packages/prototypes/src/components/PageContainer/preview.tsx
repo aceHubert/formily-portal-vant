@@ -1,6 +1,6 @@
 import { createBehavior, createResource } from '@designable/core'
-import { PageContainer as FormilyPageContainer } from '@lj-portal/vant'
-import { composeExport } from '@lj-portal/vant/esm/__builtins__'
+import { PageContainer as FormilyPageContainer } from '@formily-portal/vant'
+import { composeExport } from '@formily-portal/vant/esm/__builtins__'
 import { withContainer } from '../../common/Container'
 import { AllSchemas } from '../../schemas'
 import { AllLocales } from '../../locales'

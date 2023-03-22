@@ -1,9 +1,9 @@
-# @lj-portal/vant-setters
+# @formily-portal/vant-setters
 
 > Formily Designable 设置器
 
 ## 安装
 
 ```bash
-npm install @lj-portal/vant-setters --save
+npm install @formily-portal/vant-setters --save
 ```

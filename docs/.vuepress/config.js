@@ -55,7 +55,7 @@ module.exports = {
     return {
       resolve: {
         alias: {
-          '@lj-portal/vant': path.resolve(
+          '@formily-portal/vant': path.resolve(
             __dirname,
             '../../packages/components/src'
           ),

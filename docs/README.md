@@ -19,8 +19,15 @@ footer: Open-source MIT Licensed | Copyright © 2019-present
 vue2:
 
 ```bash
-$ npm install --save lj-portal-vant
-$ npm install --save @formily/core @formily/vue @vue/composition-api @formily/vant
+$ npm install --save vant
+$ npm install --save @formily/core @formily/vue @vue/composition-api @formily/vant @formily-portal/vant
+```
+
+vue2.7.x 或 vue3:
+
+```bash
+$ npm install --save vant
+$ npm install --save @formily/core @formily/vue @formily-portal/vant
 ```
 
 ## 快速开始

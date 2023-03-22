@@ -1,9 +1,9 @@
-# @lj-portal/vant-setters
+# @formily-portal/vant-setters
 
 > Formily Designable Component Adaptor
 
 ## Install
 
 ```bash
-npm install @lj-portal/vant-setters --save
+npm install @formily-portal/vant-setters --save
 ```

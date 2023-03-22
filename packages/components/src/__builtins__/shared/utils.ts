@@ -71,7 +71,7 @@ export function warn(condition: boolean, format: string, ...args: any[]) {
   if (!condition) {
     let argIndex = 0
     const message =
-      '[@lj-portal/vant]: ' +
+      '[@formily-portal/vant]: ' +
       format.replace(/%s/g, function () {
         return args[argIndex++]
       })

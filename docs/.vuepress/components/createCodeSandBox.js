@@ -4,11 +4,11 @@ const CodeSandBoxHTML = '<div id="app"></div>'
 const CodeSandBoxJS = `
 import Vue from 'vue'
 import App from './App.vue'
-import Element  from 'lj-portal-vant';
-import 'lj-portal-vant/lib/theme-chalk/index.css';
+import Vant  from 'vant';
+import 'vant/lib/index.css';
 
 Vue.config.productionTip = false
-Vue.use(Element, { size: 'small' });
+Vue.use(Vant, { size: 'small' });
 
 new Vue({
   render: h => h(App),
@@ -68,7 +68,7 @@ export function createCodeSandBox(codeStr) {
             '@formily/vant': 'latest',
             axios: '^0.21.1',
             'core-js': '^3.6.5',
-            'lj-portal-vant': 'latest',
+            'formily-portal-vant': 'latest',
             'vue-demi': 'latest',
             vue: '^2.6.11',
           },

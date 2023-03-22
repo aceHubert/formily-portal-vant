@@ -1,6 +1,6 @@
 import { createBehavior, createResource } from '@designable/core'
-import { Tabbar as FormilyTabbar } from '@lj-portal/vant'
-import { composeExport } from '@formily/vant/esm/__builtins__'
+import { Tabbar as FormilyTabbar } from '@formily-portal/vant'
+import { composeExport } from '@formily-portal/vant/esm/__builtins__'
 import { AllSchemas } from '../../schemas'
 import { AllLocales } from '../../locales'
 import { createFieldSchema } from '../Field'

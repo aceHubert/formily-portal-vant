@@ -5,7 +5,7 @@ export const BuilderConfig: IBuilderConfig = {
   targetLibCjsDir: 'lib',
   targetLibEsDir: 'es',
   externals: {
-    '@lj-portal/vant': 'LjPortal.Vant',
+    '@formily-portal/vant': 'FormilyPortal.Vant',
     '@formily/antdv': 'Formily.Antdv',
     '@formily/antdv-designable': 'Formily.AntdvDesignable',
     '@formily/antdv-setters': 'Formily.AntdvSetters',

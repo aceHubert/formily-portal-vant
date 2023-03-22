@@ -1,6 +1,6 @@
-import { PageLayout as FormilyPageLayout } from '@lj-portal/vant'
+import { PageLayout as FormilyPageLayout } from '@formily-portal/vant'
 import { createBehavior, createResource } from '@designable/core'
-import { composeExport } from '@lj-portal/vant/esm/__builtins__'
+import { composeExport } from '@formily-portal/vant/esm/__builtins__'
 import { withContainer } from '../../common/Container'
 import { createVoidFieldSchema } from '../Field'
 import { AllSchemas } from '../../schemas'

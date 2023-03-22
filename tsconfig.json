@@ -16,10 +16,10 @@
     "downlevelIteration": true,
     "baseUrl": ".",
     "paths": {
-      "@lj-portal/vant": ["packages/components/src"],
-      "@lj-portal/vant/esm/*": ["packages/components/src/*"],
-      "@lj-portal/antdv/lib/*": ["packages/components/src/*"],
-      "@lj-portal/vant-*": ["packages/*/src"]
+      "@formily-portal/vant": ["packages/components/src"],
+      "@formily-portal/vant/esm/*": ["packages/components/src/*"],
+      "@formily-portal/antdv/lib/*": ["packages/components/src/*"],
+      "@formily-portal/vant-*": ["packages/*/src"]
     }
   }
 }

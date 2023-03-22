@@ -1,9 +1,9 @@
-# @lj-portal/vant-renderer
+# @formily-portal/vant-renderer
 
 > Formily Designable Settings Form
 
 ## Install
 
 ```bash
-npm install @lj-portal/vant-renderer --save
+npm install @formily-portal/vant-renderer --save
 ```

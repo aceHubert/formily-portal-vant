@@ -1,5 +1,5 @@
 {
-  "name": "@lj-portal/vant-renderer",
+  "name": "@formily-portal/vant-renderer",
   "version": "1.0.0-alpha.0",
   "private": true,
   "license": "MIT",
@@ -9,9 +9,9 @@
     "npm": ">=3.0.0"
   },
   "module": "esm",
-  "umd:main": "dist/lj-portal.vant-renderer.umd.production.js",
-  "unpkg": "dist/lj-portal.vant-renderer.umd.production.js",
-  "jsdelivr": "dist/lj-portal.vant-renderer.umd.production.js",
+  "umd:main": "dist/formily-portal.vant-renderer.umd.production.js",
+  "unpkg": "dist/formily-portal.vant-renderer.umd.production.js",
+  "jsdelivr": "dist/formily-portal.vant-renderer.umd.production.js",
   "jsnext:main": "esm",
   "sideEffects": [
     "dist/*",

@@ -1,11 +1,11 @@
 import { defineComponent } from 'vue-demi'
-import { composeExport } from '@lj-portal/vant/esm/__builtins__'
 import {
   GlobalRegistry,
   createBehavior,
   createResource,
 } from '@designable/core'
 import { useTreeNode } from '@formily/antdv-designable'
+import { composeExport } from '@formily-portal/vant/esm/__builtins__'
 import CKEditor from '@ckeditor/ckeditor5-vue2'
 import BalloonEditor from '@ckeditor/ckeditor5-build-balloon'
 import { AllSchemas } from '../../schemas'

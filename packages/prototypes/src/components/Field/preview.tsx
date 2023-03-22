@@ -1,5 +1,6 @@
 import { defineComponent } from 'vue-demi'
 import { createBehavior } from '@designable/core'
+import { isArr, isFn, isStr } from '@designable/shared'
 import {
   useComponents,
   useDesigner,
@@ -18,11 +19,11 @@ import {
 } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { FormItem } from '@formily/antdv'
-import { isArr, isFn, isStr } from '@designable/shared'
-import { composeExport } from '@lj-portal/vant/esm/__builtins__'
+import { composeExport } from '@formily-portal/vant/esm/__builtins__'
 import { Container } from '../../common/Container'
 import { AllLocales } from '../../locales'
 
+// Types
 import type { DnFC } from '@formily/antdv-designable'
 import type { ISchema } from '@formily/vue'
 

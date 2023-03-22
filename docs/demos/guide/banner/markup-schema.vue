@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { Banner } from '@lj-portal/vant'
+import { Banner } from '@formily-portal/vant'
 
 export default {
   name: 'Banner',
