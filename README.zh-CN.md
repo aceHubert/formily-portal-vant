@@ -33,9 +33,6 @@
 
 ![https://designable-antd.formilyjs.org/](https://img.alicdn.com/imgextra/i3/O1CN01xAJj1y1wcGzXYc1Uq_!!6000000006328-2-tps-2980-1740.png)
 
-## 官网
-
-https://vant.formilyjs.org
 
 ## 生态产品
 
@@ -43,14 +40,10 @@ https://vant.formilyjs.org
 - [formilyjs](https://github.com/formilyjs)
 - [designable](https://github.com/alibaba/designable)
 
-## 如何贡献?
-
-- [Contribute document](https://formilyjs.org/zh-CN/guide/contribution)
-
 ## 贡献者
 
 This project exists thanks to all the people who contribute.
-<a href="https://github.com/formilyjs/vant/graphs/contributors"><img src="https://contrib.rocks/image?repo=formilyjs/vant" /></a>
+<a href="https://github.com/aceHubert/formily-portal-vant/graphs/contributors"><img src="https://contrib.rocks/image?repo=aceHubert/formily-portal-vant" /></a>
 
 ## LICENSE
 
