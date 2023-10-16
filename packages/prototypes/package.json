@@ -38,7 +38,7 @@
     }
   },
   "dependencies": {
-    "@ckeditor/ckeditor5-build-balloon": "^35.4.0",
+    "@ckeditor/ckeditor5-build-balloon": "^40.0.0",
     "@ckeditor/ckeditor5-vue2": "^3.0.1"    
   },
   "devDependencies": {
